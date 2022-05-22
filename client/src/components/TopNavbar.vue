@@ -1,0 +1,5 @@
+<template>
+    <router-link to="/">Home</router-link>
+    <router-link to="/explore">Explore</router-link>
+    <router-link to="/sign-in">Sign In</router-link>
+</template>
