@@ -1,14 +1,18 @@
 <template>
-    <TopNavbar />
-    
-    <h1 class="text-3xl font-bold underline">
-        Hello world!
-    </h1>
+    <div class="flex flex-col min-h-screen overflow-hidden">
+        <Header />
+
+        <main class="flex-grow">
+            <HeroHome />
+        </main>
+    </div>
 </template>
 
 <script>
-import TopNavbar from "../../components/TopNavbar.vue";
+import Header from "../../components/Header.vue";
+import HeroHome from "../../components/HeroHome.vue";
+
 export default {
-    components: {TopNavbar}
+    components: {HeroHome, Header}
 }
 </script>

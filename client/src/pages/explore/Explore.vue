@@ -1,10 +1,17 @@
 <template>
-    <TopNavbar />
+    <div class="flex flex-col min-h-screen overflow-hidden">
+        <Header />
+
+        <main class="flex-grow">
+            Explore
+        </main>
+    </div>
 </template>
 
 <script>
-import TopNavbar from "../../components/TopNavbar.vue";
+import Header from "../../components/Header.vue";
+
 export default {
-    components: {TopNavbar}
+    components: {Header}
 }
 </script>
