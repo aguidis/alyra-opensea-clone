@@ -26,9 +26,9 @@
                             </router-link>
                         </li>
                         <li>
-                            <router-link to="/sign-in" class="btn-sm text-gray-200 bg-gray-900 hover:bg-gray-800 ml-3">
+                            <router-link to="/sign-in" class="btn-sm text-blue-600 bg-white border-blue-600 ml-3">
                                 <span>Sign in</span>
-                                <svg class="w-3 h-3 fill-current text-gray-400 flex-shrink-0 ml-2 -mr-1" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
+                                <svg class="w-3 h-3 fill-current text-blue-600 flex-shrink-0 ml-2 -mr-1" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M11.707 5.293L7 .586 5.586 2l3 3H0v2h8.586l-3 3L7 11.414l4.707-4.707a1 1 0 000-1.414z" fill-rule="nonzero" />
                                 </svg>
                             </router-link>
@@ -41,11 +41,18 @@
 </template>
 
 <script>
+import { ref } from 'vue';
+
 export default {
-    data() {
-        return {
-            msg: 'Hello world!'
-        }
-    }
+    setup() {
+        const top = ref(true);
+        
+        const scrollHandler = () => {
+            top.value = window.pageYOffset <= 10
+        };
+        window.addEventListener('scroll', scrollHandler);
+        
+        return { top }
+    },
 }
 </script>
