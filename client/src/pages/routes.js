@@ -1,4 +1,4 @@
-import {createRouter} from 'vue-router'
+import { createRouter } from 'vue-router';
 import Homepage from './home/Home.vue';
 import SignIn from './sign-in/SignIn.vue';
 import Explore from './explore/Explore.vue';
@@ -16,11 +16,11 @@ const routes = [
         path: '/sign-in',
         component: SignIn
     }
-]
+];
 
 export default function (history) {
     return createRouter({
         history,
         routes
-    })
+    });
 }

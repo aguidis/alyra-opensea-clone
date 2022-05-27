@@ -1,11 +1,11 @@
-import { defineStore } from 'pinia'
+import { defineStore } from 'pinia';
 
 export const useCatalog = defineStore('catalog-store', {
     state: () => {
         return {
             collections: [],
             fetching: false
-        }
+        };
     },
 
     getters: {
@@ -34,4 +34,4 @@ export const useCatalog = defineStore('catalog-store', {
             this.fetching = false;
         }
     }
-})
+});

@@ -2,16 +2,14 @@
     <div class="flex flex-col min-h-screen overflow-hidden">
         <Header />
 
-        <main class="flex-grow">
-            Sign in
-        </main>
+        <main class="flex-grow"></main>
     </div>
 </template>
 
 <script>
-import Header from "../../components/Header.vue";
+import Header from '../../components/Header.vue';
 
 export default {
-    components: {Header}
-}
+    components: { Header }
+};
 </script>

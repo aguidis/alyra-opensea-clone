@@ -1,6 +1,5 @@
 // Switch element
 .form-switch {
-
     @apply relative select-none;
     width: 68px;
 
@@ -15,14 +14,12 @@
             top: 4px;
             left: 4px;
             right: 50%;
-            transition: all .15s ease-out;
+            transition: all 0.15s ease-out;
         }
     }
 
-    input[type="checkbox"] {
-    
+    input[type='checkbox'] {
         &:checked {
-
             + label {
                 @apply bg-blue-600;
 

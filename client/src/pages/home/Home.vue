@@ -13,14 +13,21 @@
 </template>
 
 <script>
-import Header from "../../components/Header.vue";
-import HeroHome from "../../components/HeroHome.vue";
-import ExploreHome from "../../components/ExploreHome.vue";
-import FeaturesHome from "../../components/FeaturesHome.vue";
-import Testimonials from "../../components/Testimonials.vue";
-import Footer from "../../components/Footer.vue";
+import Header from '../../components/Header.vue';
+import HeroHome from '../../components/HeroHome.vue';
+import ExploreHome from '../../components/ExploreHome.vue';
+import FeaturesHome from '../../components/FeaturesHome.vue';
+import Testimonials from '../../components/Testimonials.vue';
+import Footer from '../../components/Footer.vue';
 
 export default {
-    components: {Footer, Testimonials, FeaturesHome, ExploreHome, HeroHome, Header}
-}
+    components: {
+        Footer,
+        Testimonials,
+        FeaturesHome,
+        ExploreHome,
+        HeroHome,
+        Header
+    }
+};
 </script>

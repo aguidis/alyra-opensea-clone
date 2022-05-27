@@ -4,8 +4,8 @@
 
 <script>
 import AOS from 'aos';
-import { watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { watch } from 'vue';
+import { useRoute } from 'vue-router';
 
 export default {
     setup() {
@@ -13,16 +13,19 @@ export default {
             once: true,
             disable: 'phone',
             duration: 700,
-            easing: 'ease-out-cubic',
+            easing: 'ease-out-cubic'
         });
 
-        const route = useRoute()
-        watch(route, (to) => {
-            document.querySelector('html').style.scrollBehavior = 'auto'
-            window.scroll({ top: 0 })
-            document.querySelector('html').style.scrollBehavior = ''
-        }, {flush: 'pre', immediate: true, deep: true})
+        const route = useRoute();
+        watch(
+            route,
+            () => {
+                document.querySelector('html').style.scrollBehavior = 'auto';
+                window.scroll({ top: 0 });
+                document.querySelector('html').style.scrollBehavior = '';
+            },
+            { flush: 'pre', immediate: true, deep: true }
+        );
     }
-}
+};
 </script>
-

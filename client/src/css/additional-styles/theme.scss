@@ -8,7 +8,6 @@ html {
 .form-select,
 .form-checkbox,
 .form-radio {
-
     &:focus {
         @apply ring-0;
     }
@@ -16,9 +15,7 @@ html {
 
 // Hamburger button
 .hamburger {
-
     svg > * {
-
         &:nth-child(1),
         &:nth-child(2),
         &:nth-child(3) {
@@ -27,7 +24,9 @@ html {
         }
 
         &:nth-child(1) {
-            transition: y 0.1s 0.25s ease-in, transform 0.22s cubic-bezier(0.55, 0.055, 0.675, 0.19), opacity 0.1s ease-in;
+            transition: y 0.1s 0.25s ease-in,
+                transform 0.22s cubic-bezier(0.55, 0.055, 0.675, 0.19),
+                opacity 0.1s ease-in;
         }
 
         &:nth-child(2) {
@@ -35,30 +34,35 @@ html {
         }
 
         &:nth-child(3) {
-            transition: y 0.1s 0.25s ease-in, transform 0.22s cubic-bezier(0.55, 0.055, 0.675, 0.19), width 0.1s 0.25s ease-in;
-        }        
+            transition: y 0.1s 0.25s ease-in,
+                transform 0.22s cubic-bezier(0.55, 0.055, 0.675, 0.19),
+                width 0.1s 0.25s ease-in;
+        }
     }
 
     &.active {
-
         svg > * {
-
             &:nth-child(1) {
                 opacity: 0;
                 y: 11;
                 transform: rotate(225deg);
-                transition: y 0.1s ease-out, transform 0.22s 0.12s cubic-bezier(0.215, 0.61, 0.355, 1), opacity 0.1s 0.12s ease-out;
+                transition: y 0.1s ease-out,
+                    transform 0.22s 0.12s cubic-bezier(0.215, 0.61, 0.355, 1),
+                    opacity 0.1s 0.12s ease-out;
             }
-    
+
             &:nth-child(2) {
                 transform: rotate(225deg);
-                transition: transform 0.22s 0.12s cubic-bezier(0.215, 0.61, 0.355, 1);
+                transition: transform 0.22s 0.12s
+                    cubic-bezier(0.215, 0.61, 0.355, 1);
             }
-    
+
             &:nth-child(3) {
                 y: 11;
                 transform: rotate(135deg);
-                transition: y 0.1s ease-out, transform 0.22s 0.12s cubic-bezier(0.215, 0.61, 0.355, 1), width 0.1s ease-out;   
+                transition: y 0.1s ease-out,
+                    transform 0.22s 0.12s cubic-bezier(0.215, 0.61, 0.355, 1),
+                    width 0.1s ease-out;
             }
         }
     }
@@ -66,25 +70,45 @@ html {
 
 // Pulsing animation
 @keyframes pulseLoop {
-    0% { opacity: .15; transform: scale(1) translateZ(0); }
-    30% { opacity: .15; }
-    60% { opacity: 0; }
-    80% { opacity: 0; transform: scale(1.8) translateZ(0); }
+    0% {
+        opacity: 0.15;
+        transform: scale(1) translateZ(0);
+    }
+    30% {
+        opacity: 0.15;
+    }
+    60% {
+        opacity: 0;
+    }
+    80% {
+        opacity: 0;
+        transform: scale(1.8) translateZ(0);
+    }
 }
 @keyframes pulseMiniLoop {
-    0% { opacity: 0; transform: scale(1) translateZ(0); }
-    30% { opacity: .3; }
-    50% { opacity: .3; }
-    80% { opacity: 0; transform: scale(3) translateZ(0); }
+    0% {
+        opacity: 0;
+        transform: scale(1) translateZ(0);
+    }
+    30% {
+        opacity: 0.3;
+    }
+    50% {
+        opacity: 0.3;
+    }
+    80% {
+        opacity: 0;
+        transform: scale(3) translateZ(0);
+    }
 }
 .pulse {
     transform: scale(1);
     opacity: 0;
     transform-origin: center;
-    animation: pulseLoop 10000ms linear infinite;                                   
+    animation: pulseLoop 10000ms linear infinite;
 }
 .pulse-mini {
-    animation: pulseMiniLoop 6000ms linear infinite;                                   
+    animation: pulseMiniLoop 6000ms linear infinite;
 }
 .pulse-1 {
     animation-delay: -3000ms;
@@ -107,8 +131,8 @@ html {
 }
 
 // Custom AOS animations
-[data-aos="zoom-y-out"] {
-  transform: scaleX(1.03);
-  opacity: 0;
-  transition-property: transform, opacity;
+[data-aos='zoom-y-out'] {
+    transform: scaleX(1.03);
+    opacity: 0;
+    transition-property: transform, opacity;
 }

@@ -1,6 +1,7 @@
-import { defineConfig } from 'vite'
-import postcss from './postcss.config.js'
-import vue from '@vitejs/plugin-vue'
+import { defineConfig } from 'vite';
+import postcss from './postcss.config.js';
+import vue from '@vitejs/plugin-vue';
+import eslintPlugin from 'vite-plugin-eslint';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -8,22 +9,22 @@ export default defineConfig({
         'process.env': process.env
     },
     css: {
-        postcss,
+        postcss
     },
-    plugins: [vue()],
+    plugins: [vue(), eslintPlugin()],
     resolve: {
         alias: [
             {
                 find: /^~.+/,
                 replacement: (val) => {
-                    return val.replace(/^~/, "");
-                },
-            },
-        ],
+                    return val.replace(/^~/, '');
+                }
+            }
+        ]
     },
     build: {
         commonjsOptions: {
-            transformMixedEsModules: true,
+            transformMixedEsModules: true
         }
     }
-})
+});
