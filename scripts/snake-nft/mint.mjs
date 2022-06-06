@@ -3,7 +3,7 @@ import { parse } from 'csv-parse'
 import fs from 'fs'
 
 const CONTRACT_ADDRESS = "0x0689a34eEd3498C5a310b93F016725f34F6246aE"
-const METADATA_URLS_PATH = 'scripts/poke-nft/assets/metadata_urls.csv'
+const METADATA_URLS_PATH = 'scripts/snake-nft/assets/metadata_urls.csv'
 
 // Process CSV file
 const parser = parse({columns: true}, async function (err, records) {
