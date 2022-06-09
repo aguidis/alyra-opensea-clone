@@ -1,20 +1,14 @@
-const { ethers } = require("ethers")
-const Artifact = require("./client/src/contracts/TokenFarm.json")
+const { ethers } = require("ethers");
+const Artifact = require("./client/src/contracts/CometSpaceshipNFT.json");
 
 // For example here, interact with Alchemy JSON-RPC
-const provider = new ethers.providers
-    .JsonRpcProvider("HTTP://127.0.0.1:7545");
+const provider = new ethers.providers.JsonRpcProvider("HTTP://127.0.0.1:7545");
 
-const contractAddress = "0xb9ca4fDE5cE9f9e3Cd22caaAa8a6469023D5c493";
+const contractAddress = "0x89F53B7bAc7D0429f6e128d45F21f69FBCdA16B3";
 
-const contract = new ethers.Contract(
-    contractAddress,
-    Artifact.abi,
-    provider
-);
+const contract = new ethers.Contract(contractAddress, Artifact.abi, provider);
 
 // Call a getter method
-contract.getStakes({ from: '0x757E71eA0845e9c063C7c21113b254690A1fb1f3' }).then((response) => {
-    console.log(response);
+contract.balanceOf("0xd3983e2590BE7c2FCc5A1DF25bDc37492dB92519").then((response) => {
+    console.log(response.toString());
 });
-

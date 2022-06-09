@@ -1,7 +1,7 @@
 const path = require("path");
-require('dotenv').config();
+require("dotenv").config();
 
-const HDWalletProvider = require('@truffle/hdwallet-provider');
+const HDWalletProvider = require("@truffle/hdwallet-provider");
 const infuraKey = process.env.INFURA_KEY;
 const mnemonic = process.env.MNENOMIC;
 
@@ -13,17 +13,16 @@ module.exports = {
         develop: {
             host: "127.0.0.1",
             port: 7545,
-            network_id: 1337
+            network_id: 1337,
         },
-        kovan: {
-            provider: () => new HDWalletProvider(mnemonic, `https://kovan.infura.io/v3/${infuraKey}`),
-            network_id: 42, // Ropsten's id
-            gas: 5500000, // Ropsten has a lower block limit than mainnet
-        }
+        rinkeby: {
+            provider: () => new HDWalletProvider(mnemonic, `https://rinkeby.infura.io/v3/${infuraKey}`),
+            network_id: 4,
+        },
     },
     compilers: {
         solc: {
-            version: "^0.8.0"
-        }
-    }
+            version: "^0.8.0",
+        },
+    },
 };

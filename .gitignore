@@ -3,6 +3,8 @@
 # dependencies
 node_modules
 
+client/src/contracts/
+
 # misc
 .DS_Store
 .env

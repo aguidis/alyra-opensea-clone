@@ -2,7 +2,8 @@
 
 # Executables: local only
 TRUFFLE = truffle
-NPM = npm
+NPM = 
+VITE = vite
 
 # Misc
 .DEFAULT_GOAL = help
@@ -20,10 +21,15 @@ compile: ## Compile smart contracts located in contracts folder
 	$(TRUFFLE) compile
 
 migrate-ganache: ## Deploy contracts locally (You need to have a running Ganache node)
-	$(TRUFFLE) migrate --network develop
+	$(TRUFFLE) migrate --reset --network develop 
 
-migrate-kovan: ## Deploy contracts on Kovan branch
-	$(TRUFFLE) migrate --network kovan
+migrate-rinkeby: ## Deploy contracts on Rinkeby testnet
+	$(TRUFFLE) migrate --reset --network rinkeby
+
+mint-ganache-nft: ## Mint to admin (accounts[0]) CometSpaceshipNFT and SnakeNFT
+	$(TRUFFLE) exec --network develop scripts/comet-spaceship-nft/mint.js
+	$(TRUFFLE) exec --network develop scripts/poke-nft/mint.js
+	$(TRUFFLE) exec --network develop scripts/snake-nft/mint.js
 
 ## —— Dapp ————————————————————————————————————————————————————————
 run: ## Start local server
@@ -34,6 +40,9 @@ build: ## Prepare assets for production
 
 preview: ## will boot up local static web server that serves the files from dist
 	$(NPM) run preview --prefix client
+
+lint: ## Lint assets
+	$(NPM) run lint --prefix client
 
 format: ## Format assets
 	$(NPM) run format --prefix client
