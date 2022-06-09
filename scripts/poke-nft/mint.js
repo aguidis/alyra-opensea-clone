@@ -615,7 +615,7 @@ module.exports = async function (callback) {
             const record = data[index];
             console.log(`Minting: ${record["ITEM"]} (${record["IPFS_URL"]})`);
 
-            await contract.mintNFT(owner, record["IPFS_URL"]);
+            await contract.safeMint(owner, record["IPFS_URL"]);
         }
     } catch (error) {
         console.log("error", error);
