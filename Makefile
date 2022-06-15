@@ -23,6 +23,9 @@ compile: ## Compile smart contracts located in contracts folder
 migrate-ganache: ## Deploy contracts locally (You need to have a running Ganache node)
 	$(TRUFFLE) migrate --reset --network develop 
 
+migrate-ganache-marketplace: ## Deploy contracts locally (You need to have a running Ganache node)
+	$(TRUFFLE) migrate --network develop -f 2 --to 2
+
 migrate-rinkeby: ## Deploy contracts on Rinkeby testnet
 	$(TRUFFLE) migrate --reset --network rinkeby
 
