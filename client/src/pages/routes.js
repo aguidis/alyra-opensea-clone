@@ -1,6 +1,5 @@
 import { createRouter } from 'vue-router';
 import Homepage from './home/Home.vue';
-import SignIn from './sign-in/SignIn.vue';
 import Explore from './explore/Explore.vue';
 
 const routes = [
@@ -11,10 +10,6 @@ const routes = [
     {
         path: '/explore',
         component: Explore
-    },
-    {
-        path: '/sign-in',
-        component: SignIn
     }
 ];
 

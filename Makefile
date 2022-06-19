@@ -2,8 +2,7 @@
 
 # Executables: local only
 TRUFFLE = truffle
-NPM = 
-VITE = vite
+NPM = npm
 
 # Misc
 .DEFAULT_GOAL = help
@@ -49,3 +48,7 @@ lint: ## Lint assets
 
 format: ## Format assets
 	$(NPM) run format --prefix client
+
+fix-js: ## Lint + Format assets
+	make lint
+	make format
