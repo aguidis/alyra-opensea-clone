@@ -1,9 +1,10 @@
 import { StaticJsonRpcProvider, Web3Provider } from '@ethersproject/providers';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import Web3Modal from 'web3modal';
+import { ethers } from 'ethers';
 
-import { defineStore } from 'pinia';
 import { markRaw, reactive } from 'vue';
+import { defineStore } from 'pinia';
 
 import { DEFAULT_NETWORK } from '../constants/blockchain';
 import { getNetworkParams } from '../helpers/network-params';
@@ -27,6 +28,7 @@ export const useWalletStore = defineStore('wallet', () => {
     const state = reactive({
         provider: new StaticJsonRpcProvider(getNetworkParams().rpcUrls[0]),
         address: '',
+        balance: 0,
         isConnected: false,
         providerChainID: DEFAULT_NETWORK
     });
@@ -66,6 +68,12 @@ export const useWalletStore = defineStore('wallet', () => {
             .then((network) => Number(network.chainId));
 
         state.address = await connectedProvider.getSigner().getAddress();
+
+        const balance = await connectedProvider.getSigner().getBalance();
+
+        const balanceEth = ethers.utils.formatEther(balance);
+        state.balance = Math.round(balanceEth * 1e4) / 1e4;
+
         state.providerChainID = chainId;
 
         if (chainId === DEFAULT_NETWORK) {
@@ -90,6 +98,7 @@ export const useWalletStore = defineStore('wallet', () => {
     function disconnect() {
         state.isConnected = false;
         state.address = '';
+        state.balance = 0;
         state.providerChainID = DEFAULT_NETWORK;
         state.provider = new StaticJsonRpcProvider(
             getNetworkParams().rpcUrls[0]

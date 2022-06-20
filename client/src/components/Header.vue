@@ -5,45 +5,44 @@
     >
         <div class="max-w-6xl mx-auto px-5 sm:px-6">
             <div class="flex items-center justify-between h-16 md:h-20">
-                <div class="flex-shrink-0 mr-4">
-                    <router-link to="/" class="block" aria-label="Cruip">
-                        <svg
-                            class="w-8 h-8"
-                            viewBox="0 0 32 32"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <defs>
-                                <radialGradient
-                                    id="header-logo"
-                                    cx="21.152%"
-                                    cy="86.063%"
-                                    fx="21.152%"
-                                    fy="86.063%"
-                                    r="79.941%"
-                                >
-                                    <stop stop-color="#4FD1C5" offset="0%" />
-                                    <stop
-                                        stop-color="#81E6D9"
-                                        offset="25.871%"
-                                    />
-                                    <stop stop-color="#338CF5" offset="100%" />
-                                </radialGradient>
-                            </defs>
-                            <rect
-                                width="32"
-                                height="32"
-                                rx="16"
-                                fill="url(#header-logo)"
-                                fill-rule="nonzero"
-                            />
-                        </svg>
-                    </router-link>
-                </div>
-
                 <nav class="flex flex-grow">
                     <ul
-                        class="flex flex-grow justify-end flex-wrap items-center"
+                        class="flex flex-grow justify-start flex-wrap items-center"
                     >
+                        <li>
+                            <router-link to="/" class="block" aria-label="Cruip">
+                                <svg
+                                    class="w-8 h-8"
+                                    viewBox="0 0 32 32"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <defs>
+                                        <radialGradient
+                                            id="header-logo"
+                                            cx="21.152%"
+                                            cy="86.063%"
+                                            fx="21.152%"
+                                            fy="86.063%"
+                                            r="79.941%"
+                                        >
+                                            <stop stop-color="#4FD1C5" offset="0%" />
+                                            <stop
+                                                stop-color="#81E6D9"
+                                                offset="25.871%"
+                                            />
+                                            <stop stop-color="#338CF5" offset="100%" />
+                                        </radialGradient>
+                                    </defs>
+                                    <rect
+                                        width="32"
+                                        height="32"
+                                        rx="16"
+                                        fill="url(#header-logo)"
+                                        fill-rule="nonzero"
+                                    />
+                                </svg>
+                            </router-link>
+                        </li>
                         <li>
                             <router-link
                                 to="/explore"
@@ -52,11 +51,12 @@
                                 Explore
                             </router-link>
                         </li>
-                        <li>
-                            <ConnectButton />
-                        </li>
                     </ul>
                 </nav>
+
+                <div class="flex-shrink-0 mr-4">
+                    <ConnectButton />
+                </div>
             </div>
         </div>
     </header>
