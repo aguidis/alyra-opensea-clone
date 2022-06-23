@@ -36,6 +36,9 @@ mint-ganache-nft: ## Mint to admin (accounts[0]) CometSpaceshipNFT and SnakeNFT
 load-fixtures: ## Load fixtures in MarketplaceNFT
 	$(TRUFFLE) exec --network develop scripts/marketplace-nft/collection-fixtures.js
 
+debug-marketplace: ## Debug MarketplaceNFT
+	$(TRUFFLE) exec --network develop scripts/marketplace-nft/debug-collections.js
+
 ## —— Dapp ————————————————————————————————————————————————————————
 run: ## Start local server
 	$(NPM) run dev --prefix client

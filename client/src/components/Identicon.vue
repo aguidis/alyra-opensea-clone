@@ -44,11 +44,9 @@ const props = defineProps({
 const jazzicon = ref(null);
 
 onMounted(() => {
-    jazzicon.value.appendChild(
-        Jazzicon(16, parseInt(props.account.slice(2, 10), 16))
-    );
+    jazzicon.value.appendChild(Jazzicon(16, parseInt(props.account.slice(2, 10), 16)));
 });
 </script>
 <template>
-    <div ref="jazzicon" />
+    <div ref="jazzicon" style="height: 16px" />
 </template>

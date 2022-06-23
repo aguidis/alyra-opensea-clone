@@ -1,6 +1,6 @@
 import { createRouter } from 'vue-router';
-import Homepage from './home/Home.vue';
-import Explore from './explore/Explore.vue';
+import Homepage from './Home.vue';
+import Explore from './Explore.vue';
 
 const routes = [
     {
@@ -8,7 +8,7 @@ const routes = [
         component: Homepage
     },
     {
-        path: '/explore',
+        path: '/explore-collections',
         component: Explore
     }
 ];

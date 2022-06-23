@@ -1,10 +1,7 @@
 import { ethers, BigNumber } from 'ethers';
 
 export function shortenAddress(address) {
-    return `${address.slice(0, 6)}...${address.slice(
-        address.length - 4,
-        address.length
-    )}`;
+    return `${address.slice(0, 6)}...${address.slice(address.length - 4, address.length)}`;
 }
 
 export function compareAddress(firstAddress, secondAddress) {
@@ -32,10 +29,7 @@ export function addressEqual(firstAddress, secondAddress) {
     }
 
     try {
-        return (
-            ethers.utils.getAddress(firstAddress) ===
-            ethers.utils.getAddress(secondAddress)
-        );
+        return ethers.utils.getAddress(firstAddress) === ethers.utils.getAddress(secondAddress);
     } catch {
         throw new TypeError("Invalid input, address can't be parsed");
     }

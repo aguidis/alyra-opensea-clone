@@ -3,42 +3,42 @@ import MarketplaceNFT from '../contracts/MarketplaceNFT.json';
 //import IERC721 from '../contracts/IERC721.json';
 import { ethers } from 'ethers';
 
-import { markRaw, reactive } from 'vue';
 import { defineStore } from 'pinia';
 
 import { DEFAULT_NETWORK } from '../constants/blockchain';
 import { getNetworkParams } from '../helpers/network-params';
 
-export const useCollectionStore = defineStore('collection', () => {
-    const state = reactive({
-        provider: markRaw(new StaticJsonRpcProvider(getNetworkParams().rpcUrls[0])),
-        contract: null,
+export const useCollectionStore = defineStore({
+    id: 'post',
+    state: () => ({
         collections: [],
+        collection: null,
         loading: false,
-        providerChainID: DEFAULT_NETWORK
-    });
+        error: null
+    }),
+    actions: {
+        async fetchCollections() {
+            this.collections = [];
+            this.loading = true;
+            try {
+                const provider = new StaticJsonRpcProvider(getNetworkParams().rpcUrls[0]);
+                const marketplaceSigner = provider.getSigner();
 
-    async function getCollections() {
-        state.loading = true;
-        try {
-            const marketplaceContractNetwork = MarketplaceNFT.networks[state.providerChainID];
-            const marketplaceSigner = state.provider.getSigner();
+                const contractNetwork = MarketplaceNFT.networks[DEFAULT_NETWORK];
+                const contract = new ethers.Contract(contractNetwork.address, MarketplaceNFT.abi, marketplaceSigner);
 
-            state.contract = markRaw(new ethers.Contract(marketplaceContractNetwork.address, MarketplaceNFT.abi, marketplaceSigner));
+                const collectionCount = await contract.getCollectionCount();
 
-            const collectionCount = await state.contract.getCollectionCount();
+                for (let i = 0; i < parseInt(collectionCount.toString(), 10); i++) {
+                    const collection = await contract.getCollectionAtIndex(i);
 
-            console.log('getCollections', collectionCount.toString());
-
-            state.loading = false;
-        } catch (e) {
-            state.loading = false;
-            console.log('e', e);
+                    this.collections.push(collection);
+                }
+            } catch (error) {
+                this.error = error;
+            } finally {
+                this.loading = false;
+            }
         }
     }
-
-    return {
-        state,
-        getCollections
-    };
 });

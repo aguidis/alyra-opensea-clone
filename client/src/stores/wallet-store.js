@@ -42,9 +42,7 @@ export const useWalletStore = defineStore('wallet', () => {
             return;
         }
 
-        rawProvider.on('accountsChanged', () =>
-            setTimeout(() => window.location.reload(), 1)
-        );
+        rawProvider.on('accountsChanged', () => setTimeout(() => window.location.reload(), 1));
 
         rawProvider.on('chainChanged', async (chain) => {
             changeNetwork(chain);
@@ -63,9 +61,7 @@ export const useWalletStore = defineStore('wallet', () => {
 
         const connectedProvider = new Web3Provider(rawProvider, 'any');
 
-        const chainId = await connectedProvider
-            .getNetwork()
-            .then((network) => Number(network.chainId));
+        const chainId = await connectedProvider.getNetwork().then((network) => Number(network.chainId));
 
         state.address = await connectedProvider.getSigner().getAddress();
 
@@ -100,9 +96,7 @@ export const useWalletStore = defineStore('wallet', () => {
         state.address = '';
         state.balance = 0;
         state.providerChainID = DEFAULT_NETWORK;
-        state.provider = new StaticJsonRpcProvider(
-            getNetworkParams().rpcUrls[0]
-        );
+        state.provider = new StaticJsonRpcProvider(getNetworkParams().rpcUrls[0]);
     }
 
     function hasCachedProvider() {

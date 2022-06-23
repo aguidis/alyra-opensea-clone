@@ -18,10 +18,7 @@ export default defineConfig({
         eslintPlugin(),
         !production &&
             nodePolyfills({
-                include: [
-                    'node_modules/**/*.js',
-                    new RegExp('node_modules/.vite/.*js')
-                ]
+                include: ['node_modules/**/*.js', new RegExp('node_modules/.vite/.*js')]
             })
     ],
     resolve: {
