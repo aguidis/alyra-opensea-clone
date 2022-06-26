@@ -3,12 +3,14 @@ import { storeToRefs } from 'pinia';
 import { useCollectionStore } from '../stores/collection-store';
 import Header from '../components/Header.vue';
 
-const { collections, loading, error } = storeToRefs(useCollectionStore());
+const { collections } = storeToRefs(useCollectionStore());
 const { fetchCollections } = useCollectionStore();
 
 fetchCollections();
 
-console.log(collections, loading, error);
+const toKebabCase = (str) => {
+    return str.replace(/\s+/g, '-').toLowerCase();
+};
 </script>
 
 <template>
@@ -28,9 +30,9 @@ console.log(collections, loading, error);
                             :key="item.index.toString()"
                             class="bg-white border border-gray-100 rounded-lg text-center hover:shadow-lg align-center"
                         >
-                            <a href="">
+                            <router-link :to="`/collection/${item.index}-${toKebabCase(item.name)}`">
                                 <img src="https://picsum.photos/500/300" class="rounded-t-lg" alt="#" />
-                            </a>
+                            </router-link>
                             <a href="">
                                 <div class="flex justify-center">
                                     <img

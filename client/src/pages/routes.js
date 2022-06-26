@@ -1,6 +1,7 @@
 import { createRouter } from 'vue-router';
 import Homepage from './Home.vue';
 import Explore from './Explore.vue';
+import Collection from './Collection.vue';
 
 const routes = [
     {
@@ -10,6 +11,10 @@ const routes = [
     {
         path: '/explore-collections',
         component: Explore
+    },
+    {
+        path: '/collection/:id-:slug',
+        component: Collection
     }
 ];
 

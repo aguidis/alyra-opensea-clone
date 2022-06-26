@@ -4,15 +4,14 @@ pragma solidity ^0.8.14;
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-
-    error CollectionAlreadyRegistered(address nftAddress);
-    error NotApprovedForMarketplace();
-    error AlreadyListed(address nftAddress, uint256 tokenId);
-    error NotListed(address nftAddress, uint256 tokenId);
-    error PriceMustBeAboveZero();
-    error PriceNotMet(address nftAddress, uint256 tokenId, uint256 price);
-    error NoProceeds();
-    error NotOwner();
+error CollectionAlreadyRegistered(address nftAddress);
+error NotApprovedForMarketplace();
+error AlreadyListed(address nftAddress, uint256 tokenId);
+error NotListed(address nftAddress, uint256 tokenId);
+error PriceMustBeAboveZero();
+error PriceNotMet(address nftAddress, uint256 tokenId, uint256 price);
+error NoProceeds();
+error NotOwner();
 
 contract MarketplaceNFT is ReentrancyGuard {
     struct Listing {
