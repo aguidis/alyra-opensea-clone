@@ -1,6 +1,6 @@
 import { StaticJsonRpcProvider } from '@ethersproject/providers';
 import MarketplaceNFT from '../contracts/MarketplaceNFT.json';
-import IERC721Enumerable from '../contracts/IERC721Enumerable.json';
+import GenericNFT from '../contracts/PokemonNFT.json';
 import { ethers } from 'ethers';
 
 import { defineStore } from 'pinia';
@@ -9,10 +9,10 @@ import { DEFAULT_NETWORK } from '../constants/blockchain';
 import { getNetworkParams } from '../helpers/network-params';
 
 const provider = new StaticJsonRpcProvider(getNetworkParams().rpcUrls[0]);
-const marketplaceSigner = provider.getSigner();
+const signer = provider.getSigner();
 
 const contractNetwork = MarketplaceNFT.networks[DEFAULT_NETWORK];
-const maketplaceContract = new ethers.Contract(contractNetwork.address, MarketplaceNFT.abi, marketplaceSigner);
+const maketplaceContract = new ethers.Contract(contractNetwork.address, MarketplaceNFT.abi, signer);
 
 export const useCollectionStore = defineStore({
     id: 'post',
@@ -60,14 +60,34 @@ export const useCollectionStore = defineStore({
         },
         async fetchCollectionItems(address) {
             this.loading = true;
-            this.collection = null;
+            this.collectionItems = [];
 
             try {
-                const nftContract = new ethers.Contract(address, IERC721Enumerable.abi);
+                const nftContract = new ethers.Contract(address, GenericNFT.abi, signer);
 
-                const totalSupply = await nftContract.totalSupply();
+                // TODO handle infinite scroll pagination
+                let totalSupply = await nftContract.totalSupply();
+                totalSupply = parseInt(totalSupply.toString(), 10);
+                const max = totalSupply > 10 ? 9 : totalSupply;
 
-                console.log('totalSupply', totalSupply.toString());
+                console.log('total', totalSupply);
+
+                // Promise.all()
+                const grog = [...Array(max).keys()].map((i) => {
+                    return nftContract
+                        .tokenByIndex(i)
+                        .then((tokenIndex) => {
+                            return nftContract.tokenURI(tokenIndex);
+                        })
+                        .then((tokenURI) => {
+                            const ipfsGateway = tokenURI.replace('ipfs://', 'https://nftstorage.link/ipfs/');
+                            return fetch(ipfsGateway).then((metadata) => metadata.json());
+                        });
+                });
+
+                Promise.all(grog).then((values) => {
+                    this.collectionItems = values;
+                });
             } catch (error) {
                 this.error = error;
             } finally {
