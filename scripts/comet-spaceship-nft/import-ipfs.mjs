@@ -20,7 +20,7 @@ const parser = await parse({columns: true}, async function (err, records) {
         const race = element['Race']
         const serialNumber = element['SerialNumber']
         const number = element['Number']
-        const picture = `${PHOTO_PATH}${number}.PNG`
+        const picture = `${PHOTO_PATH}${number}.png`
 
         const attributes = createAttributes(color, model, race, serialNumber)
 
@@ -41,12 +41,12 @@ function createAttributes(color, model, race, serialNumber){
 async function storeAsset(name, description, attributes, picture_path) {
     const client = new NFTStorage({ token: API_KEY })
     const metadata = await client.store({
-        name: `Alyra ${name}`,
+        name: name,
         description: description,
         attributes: attributes,
         image: new File(
             [await fs.promises.readFile(picture_path)],
-            `${name}Photo.png`,
+            `${name}.png`,
             { type: 'image/png' }
         ),
     })

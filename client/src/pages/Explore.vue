@@ -17,7 +17,7 @@ const toKebabCase = (str) => {
     <div class="flex flex-col min-h-screen overflow-hidden">
         <Header />
 
-        <main class="flex-grow">
+        <main class="flex-grow bg-gray-100">
             <section class="relative max-w-6xl mx-auto px-4 sm:px-6">
                 <div class="py-12 md:py-20">
                     <div class="max-w-3xl mx-auto text-center py-12 md:py-20">
@@ -28,7 +28,7 @@ const toKebabCase = (str) => {
                         <article
                             v-for="item in collections"
                             :key="item.index.toString()"
-                            class="bg-white border border-gray-100 rounded-lg text-center hover:shadow-lg align-center"
+                            class="bg-white border border-gray-100 rounded-lg text-center shadow-lg hover:shadow-xl align-center"
                         >
                             <router-link :to="`/collection/${item.index}-${toKebabCase(item.name)}`">
                                 <img src="https://picsum.photos/500/300" class="rounded-t-lg" alt="#" />

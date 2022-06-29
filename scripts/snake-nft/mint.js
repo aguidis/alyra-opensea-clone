@@ -1,20 +1,20 @@
 const CometSpaceshipNFT = artifacts.require("SnakeNFT");
 
-// Go to https://www.convertcsv.com/csv-to-json.htm
+// Go to https://csvjson.com/csv2json
 // Then convert the content of assets/metadata_urls.csv to json
 const data = [
     {
-        ITEM: "Marvelous Snake #1",
-        IPFS_URL: "ipfs://bafyreid2t5m3zir2bnp2br3do4bjz3mjage6wpvtnqodio3w6s7rpfnja4/metadata.json",
+        "ITEM": "Marvelous Snake #1",
+        "IPFS_URL": "ipfs://bafyreihmz6oxwvejcnz44xryo3hpux6rnsncvbpstphstmq5zv54gu6z4i/metadata.json"
     },
     {
-        ITEM: "Marvelous Snake #2",
-        IPFS_URL: "ipfs://bafyreia6j24jw5ezkyfgsuwyrjalycn7n2qic7anfeontagxiiwfdbyfba/metadata.json",
+        "ITEM": "Marvelous Snake #2",
+        "IPFS_URL": "ipfs://bafyreibrrxtjiyzi7rszlhsgyssttiqhy5m2egpptdrkbo7jkv2pjco2hu/metadata.json"
     },
     {
-        ITEM: "Marvelous Snake #3",
-        IPFS_URL: "ipfs://bafyreifwy7errguo27zpuplgmoaxpyezohzzz4grubsw6w2rql3vg2clxa/metadata.json",
-    },
+        "ITEM": "Marvelous Snake #3",
+        "IPFS_URL": "ipfs://bafyreib6p4qzwl5yfcmzpk4yvqnl7nwebejgps6fdjyzibk7n42ifjnkmy/metadata.json"
+    }
 ];
 
 module.exports = async function (callback) {

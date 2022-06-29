@@ -1,5 +1,5 @@
 <template>
-    <header class="fixed w-full z-30 md:bg-opacity-90 transition duration-300 ease-in-out" :class="`${!top && 'bg-white backdrop-blur-sm shadow-lg'}`">
+    <header class="bg-white fixed w-full z-30 md:bg-opacity-90 transition duration-300 ease-in-out" :class="`${!top && 'bg-white backdrop-blur-sm shadow-lg'}`">
         <div class="max-w-6xl mx-auto px-5 sm:px-6">
             <div class="flex items-center justify-between h-16 md:h-20">
                 <nav class="flex flex-grow">

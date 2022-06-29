@@ -20,7 +20,7 @@ compile: ## Compile smart contracts located in contracts folder
 	$(TRUFFLE) compile
 
 migrate-ganache: ## Deploy contracts locally (You need to have a running Ganache node)
-	$(TRUFFLE) migrate --reset --network develop 
+	$(TRUFFLE) migrate --reset --network develop
 
 migrate-ganache-marketplace: ## Deploy contracts locally (You need to have a running Ganache node)
 	$(TRUFFLE) migrate --network develop -f 2 --to 2
@@ -28,7 +28,7 @@ migrate-ganache-marketplace: ## Deploy contracts locally (You need to have a run
 migrate-rinkeby: ## Deploy contracts on Rinkeby testnet
 	$(TRUFFLE) migrate --reset --network rinkeby
 
-mint-ganache-nft: ## Mint to admin (accounts[0]) CometSpaceshipNFT and SnakeNFT
+mint-ganache-nft: ## Mint to admin (accounts[0]) all NFT
 	$(TRUFFLE) exec --network develop scripts/comet-spaceship-nft/mint.js
 	$(TRUFFLE) exec --network develop scripts/poke-nft/mint.js
 	$(TRUFFLE) exec --network develop scripts/snake-nft/mint.js

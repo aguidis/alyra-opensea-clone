@@ -4,18 +4,18 @@ const CometSpaceshipNFT = artifacts.require("CometSpaceshipNFT");
 // Then convert the content of assets/metadata_urls.csv to json
 const data = [
     {
-        ITEM: "Drone",
-        IPFS_URL: "ipfs://bafyreic4yluurbye7z3mmwefckv2avp4qcxmoonxgo56jwc4bkduxj57rq/metadata.json",
+        "ITEM": "Drone",
+        "IPFS_URL": "ipfs://bafyreiam342kplsnrezekti23laywwizzdu5oldz3zes7cr5ei2nh4xuii/metadata.json"
     },
     {
-        ITEM: "Explorer",
-        IPFS_URL: "ipfs://bafyreiai4kx2mul5hshfpu624x27ynlc5antlmo2i2zwsvgxylnrafsnxy/metadata.json",
+        "ITEM": "Explorer",
+        "IPFS_URL": "ipfs://bafyreib2wrqeerrd6e4b47pjvh3kdsjwmep5oe66grswvtmwrwj74u4t7q/metadata.json"
     },
     {
-        ITEM: "Jumper",
-        IPFS_URL: "ipfs://bafyreihm3f34p2jeifmk7xcnn5thrh5p5obqqlctdqlxqs234d47hfhgb4/metadata.json",
-    },
-];
+        "ITEM": "Jumper",
+        "IPFS_URL": "ipfs://bafyreig4hcwvpwxcgq44hzg2afkozjztukwh5dixqqniyostk3moivtrj4/metadata.json"
+    }
+]
 
 module.exports = async function (callback) {
     try {

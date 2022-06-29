@@ -1,31 +1,37 @@
 const MarketplaceNFT = artifacts.require("MarketplaceNFT");
+const CometSpaceshipNFT = artifacts.require("CometSpaceshipNFT");
+const PokemonNFT = artifacts.require("PokemonNFT");
+const SnakeNFT = artifacts.require("SnakeNFT");
 
 module.exports = async function (callback) {
     try {
-        const contract = await MarketplaceNFT.deployed();
+        const marketplaceNFT = await MarketplaceNFT.deployed();
+        const cometSpaceshipNFT = await CometSpaceshipNFT.deployed();
+        const pokemonNFT = await PokemonNFT.deployed();
+        const snakeNFT = await SnakeNFT.deployed();
 
-        await contract.addCollection(
-            "Pokemon 1st Gen",
-            "The first 150 original Pokemons",
-            "0x779695A22384D4d04D46DDd7cEABA1d253d40D9b",
-            "Satoshi Tajiri"
-        );
-
-        await contract.addCollection(
-            "Marveloussss Snakes",
-            "3 Marveloussss Snakes into the metaverse",
-            "0x4c4D5b976Ab3cE7C0ca3f5724edB7bc6feeb41F4",
-            "Voldemor"
-        );
-
-        await contract.addCollection(
+        await marketplaceNFT.addCollection(
             "Cometh Spaceships",
             "Cometh is a DeFi powered game with yield generating NFT. Get spaceships, explore the galaxy and earn tokens.",
-            "0x0fD6ACFfD8FaD25ffa80A2d795Dd85Ef5c686E3E",
+            cometSpaceshipNFT.address,
             "Cometh Forge"
         );
 
-        const count = await contract.getCollectionCount();
+        await marketplaceNFT.addCollection(
+            "Pokemon 1st Gen",
+            "The first 150 original Pokemons",
+            pokemonNFT.address,
+            "Satoshi Tajiri"
+        );
+
+        await marketplaceNFT.addCollection(
+            "Marveloussss Snakes",
+            "3 Marveloussss Snakes into the metaverse",
+            snakeNFT.address,
+            "Voldemor"
+        );
+
+        const count = await marketplaceNFT.getCollectionCount();
 
         console.log("count", count.toString());
     } catch (error) {
