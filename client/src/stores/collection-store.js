@@ -87,11 +87,10 @@ export const useCollectionStore = defineStore({
 
                 Promise.all(grog).then((values) => {
                     this.collectionItems = values;
+                    this.loading = false;
                 });
             } catch (error) {
                 this.error = error;
-            } finally {
-                this.loading = false;
             }
         }
     }
