@@ -38,7 +38,24 @@ export const useCollectionStore = defineStore({
                 for (let i = 0; i < parseInt(collectionCount.toString(), 10); i++) {
                     const collection = await maketplaceContract.getCollectionAtIndex(i);
 
-                    this.collections.push(collection);
+                    const nftContract = new ethers.Contract(collection.nftAddress, GenericNFT.abi, signer);
+
+                    nftContract
+                        .tokenByIndex(0)
+                        .then((tokenIndex) => {
+                            console.log('tokenIndex', tokenIndex);
+
+                            return nftContract.tokenURI(tokenIndex);
+                        })
+                        .then((tokenURI) => {
+                            const ipfsGateway = tokenURI.replace('ipfs://', 'https://nftstorage.link/ipfs/');
+                            return fetch(ipfsGateway).then((metadata) => metadata.json());
+                        })
+                        .then((itemMetadata) => {
+                            const collectionWithCoverImage = { ...collection, coverImage: itemMetadata.image };
+
+                            this.collections.push(collectionWithCoverImage);
+                        });
                 }
             } catch (error) {
                 this.error = error;

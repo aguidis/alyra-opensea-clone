@@ -28,22 +28,13 @@ const toKebabCase = (str) => {
                         <article
                             v-for="item in collections"
                             :key="item.index.toString()"
-                            class="bg-white border border-gray-100 rounded-lg text-center shadow-lg hover:shadow-xl align-center"
+                            class="bg-white border border-gray-100 rounded-lg text-center shadow-lg hover:shadow-xl align-center h-full"
                         >
                             <router-link :to="`/collection/${item.index}-${toKebabCase(item.name)}`">
-                                <img src="https://picsum.photos/500/300" class="rounded-t-lg" alt="#" />
+                                <img class="rounded-t-lg w-full" :src="item.coverImage.replace('ipfs://', 'https://nftstorage.link/ipfs/')" :alt="item.name" />
                             </router-link>
-                            <a href="">
-                                <div class="flex justify-center">
-                                    <img
-                                        src="https://picsum.photos/50/50"
-                                        class="rounded-full object-center border-4 border-white -mt-6 shadow-lg align-center"
-                                        alt="#"
-                                    />
-                                </div>
 
-                                <p class="font-bold pt-3">{{ item.name }}</p>
-                            </a>
+                            <p class="font-bold pt-3">{{ item.name }}</p>
 
                             <p class="font-semibold p-2 text-sm text-gray-500">
                                 by <a href="#" class="text-blue-500 hover:text-blue-700">{{ item.authorName }}</a>
