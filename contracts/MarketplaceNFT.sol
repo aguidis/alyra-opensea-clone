@@ -137,15 +137,26 @@ contract MarketplaceNFT is ReentrancyGuard {
     }
 
     /*
-     * @notice Returns the desired NFT collection metadata
+     * @notice Returns the desired NFT collection metadata by index
      */
     function getCollectionAtIndex(uint index)
     external
     view
     returns (Collection memory)
     {
-        address collectionAddress = collectionIndex[index];
+        address contractAddress = collectionIndex[index];
 
-        return collections[collectionAddress];
+        return collections[contractAddress];
+    }
+
+    /*
+     * @notice Returns the desired NFT collection metadata by index
+     */
+    function getCollectionByAddress(address contractAddress)
+    external
+    view
+    returns (Collection memory)
+    {
+        return collections[contractAddress];
     }
 }

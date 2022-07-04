@@ -15,11 +15,12 @@ const contractNetwork = MarketplaceNFT.networks[DEFAULT_NETWORK];
 const maketplaceContract = new ethers.Contract(contractNetwork.address, MarketplaceNFT.abi, signer);
 
 export const useCollectionStore = defineStore({
-    id: 'post',
+    id: 'collection',
     state: () => ({
         collections: [],
         collection: null,
         collectionItems: [],
+        token: null,
         loading: false,
         error: null
     }),
@@ -63,12 +64,16 @@ export const useCollectionStore = defineStore({
                 this.loading = false;
             }
         },
-        async fetchCollection(index) {
+        async fetchCollection(identifier) {
             this.loading = true;
             this.collection = null;
 
             try {
-                this.collection = await maketplaceContract.getCollectionAtIndex(index);
+                if (ethers.utils.isAddress(identifier)) {
+                    this.collection = await maketplaceContract.getCollectionByAddress(identifier);
+                } else {
+                    this.collection = await maketplaceContract.getCollectionAtIndex(identifier);
+                }
             } catch (error) {
                 this.error = error;
             } finally {
@@ -76,6 +81,7 @@ export const useCollectionStore = defineStore({
             }
         },
         async fetchCollectionItems(address) {
+            console.log('fetchCollectionItems');
             this.loading = true;
             this.collectionItems = [];
 
@@ -86,8 +92,6 @@ export const useCollectionStore = defineStore({
                 let totalSupply = await nftContract.totalSupply();
                 totalSupply = parseInt(totalSupply.toString(), 10);
                 const max = totalSupply > 10 ? 9 : totalSupply;
-
-                console.log('total', totalSupply);
 
                 // Promise.all()
                 const grog = [...Array(max).keys()].map((i) => {
@@ -108,6 +112,35 @@ export const useCollectionStore = defineStore({
                 });
             } catch (error) {
                 this.error = error;
+            }
+        },
+        async fetchToken(address, tokenIndex) {
+            this.loading = true;
+            this.token = null;
+
+            console.log('address', address);
+            console.log('tokenIndex', tokenIndex);
+
+            try {
+                const nftContract = new ethers.Contract(address, GenericNFT.abi, signer);
+
+                // TODO handle infinite scroll pagination
+                let totalSupply = await nftContract.totalSupply();
+                totalSupply = parseInt(totalSupply.toString(), 10);
+
+                if (tokenIndex >= totalSupply) {
+                    throw 'Token index not found';
+                }
+
+                const tokenId = await nftContract.tokenByIndex(tokenIndex);
+                const tokenURI = await nftContract.tokenURI(tokenId);
+                const tokenMetadata = await fetch(tokenURI.replace('ipfs://', 'https://nftstorage.link/ipfs/'));
+
+                this.token = await tokenMetadata.json();
+            } catch (error) {
+                this.error = error;
+            } finally {
+                this.loading = false;
             }
         }
     }

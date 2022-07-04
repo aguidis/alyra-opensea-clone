@@ -30,7 +30,7 @@ const toKebabCase = (str) => {
                             :key="item.index.toString()"
                             class="bg-white border border-gray-100 rounded-lg text-center shadow-lg hover:shadow-xl align-center h-full"
                         >
-                            <router-link :to="`/collection/${item.index}-${toKebabCase(item.name)}`">
+                            <router-link :to="{ name: 'collection', params: { id: item.index, slug: toKebabCase(item.name) } }">
                                 <img class="rounded-t-lg w-full" :src="item.coverImage.replace('ipfs://', 'https://nftstorage.link/ipfs/')" :alt="item.name" />
                             </router-link>
 

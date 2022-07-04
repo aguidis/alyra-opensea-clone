@@ -1,11 +1,13 @@
 <template>
     <article class="bg-white rounded-lg shadow-lg hover:shadow-xl group relative overflow-hidden">
         <div class="overflow-hidden">
-            <img
-                class="rounded-t-lg w-full hover:scale-110 transition-all"
-                :src="item.image.replace('ipfs://', 'https://nftstorage.link/ipfs/')"
-                :alt="item.name"
-            />
+            <router-link :to="{ name: 'token', params: { address: address, index: tokenIndex } }">
+                <img
+                    class="rounded-t-lg w-full hover:scale-110 transition-all"
+                    :src="item.image.replace('ipfs://', 'https://nftstorage.link/ipfs/')"
+                    :alt="item.name"
+                />
+            </router-link>
         </div>
 
         <div class="p-3">
@@ -30,8 +32,16 @@
 
 <script setup>
 const props = defineProps({
+    tokenIndex: {
+        type: Number,
+        required: true
+    },
     item: {
         type: Object,
+        required: true
+    },
+    address: {
+        type: String,
         required: true
     }
 });
