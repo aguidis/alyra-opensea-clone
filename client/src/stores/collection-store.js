@@ -134,9 +134,22 @@ export const useCollectionStore = defineStore({
 
                 const tokenId = await nftContract.tokenByIndex(tokenIndex);
                 const tokenURI = await nftContract.tokenURI(tokenId);
-                const tokenMetadata = await fetch(tokenURI.replace('ipfs://', 'https://nftstorage.link/ipfs/'));
 
-                this.token = await tokenMetadata.json();
+                const metadataUrl = tokenURI.replace('ipfs://', 'https://nftstorage.link/ipfs/');
+                const tokenMetadata = await fetch(metadataUrl);
+
+                this.tokenMetadata = metadataUrl;
+                const token = await tokenMetadata.json();
+                const listing = await maketplaceContract.getListing(address, tokenIndex);
+
+                this.token = {
+                    ...token,
+                    tokenMetadata: metadataUrl,
+                    listing: {
+                        price: parseInt(listing.price.toString(), 10),
+                        seller: listing.seller
+                    }
+                };
             } catch (error) {
                 this.error = error;
             } finally {

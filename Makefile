@@ -36,6 +36,13 @@ mint-ganache-nft: ## Mint to admin (accounts[0]) all NFT
 load-fixtures: ## Load fixtures in MarketplaceNFT
 	$(TRUFFLE) exec --network develop scripts/marketplace-nft/collection-fixtures.js
 
+boot-ganache: ## Boot all stuff
+	$(TRUFFLE) migrate --reset --network develop
+	$(TRUFFLE) exec --network develop scripts/comet-spaceship-nft/mint.js
+	$(TRUFFLE) exec --network develop scripts/poke-nft/mint.js
+	$(TRUFFLE) exec --network develop scripts/snake-nft/mint.js
+	$(TRUFFLE) exec --network develop scripts/marketplace-nft/collection-fixtures.js
+
 debug-marketplace: ## Debug MarketplaceNFT
 	$(TRUFFLE) exec --network develop scripts/marketplace-nft/debug-collections.js
 

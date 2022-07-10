@@ -30,7 +30,7 @@
 
                     <div class="relative flex flex-col lg:flex-row justify-between items-center">
                         <h3 class="h3 text-white mb-2">Discover the latest collections</h3>
-                        <button class="btn text-white bg-blue-600 hover:bg-blue-700 shadow">Explore</button>
+                        <router-link :to="{ name: 'explore' }" class="btn text-white bg-blue-600 hover:bg-blue-700 shadow"> Explore </router-link>
                     </div>
                 </div>
             </div>

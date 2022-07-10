@@ -3,6 +3,7 @@ import { useRoute } from 'vue-router';
 import { storeToRefs } from 'pinia/dist/pinia.esm-browser';
 import { useCollectionStore } from '../stores/collection-store';
 import Header from '../components/Header.vue';
+import { shortenAddress } from '../helpers/address';
 
 const route = useRoute();
 const address = route.params.address;
@@ -13,17 +14,36 @@ const { fetchCollection, fetchToken } = useCollectionStore();
 
 fetchCollection(address);
 fetchToken(address, tokenIndex);
+
+const toKebabCase = (str) => {
+    return str.replace(/\s+/g, '-').toLowerCase();
+};
 </script>
 
 <template>
     <div class="flex flex-col min-h-screen overflow-hidden">
         <Header />
 
-        <main class="flex-grow bg-gray-100">
+        <main class="flex-grow">
             <div v-if="collection && token" class="max-w-6xl mx-auto px-4 sm:px-6 pt-32">
                 <div class="flex flex-row flex-wrap py-4">
                     <aside class="w-full sm:w-1/3 md:w-2/5 px-2">
-                        <img class="rounded w-full" :src="token.image.replace('ipfs://', 'https://nftstorage.link/ipfs/')" :alt="token.name" />
+                        <article class="rounded-lg border overflow-hidden">
+                            <header class="py-3 px-5 border-b">
+                                <a href="#" class="font-bold text-opensea-400">
+                                    Buy now
+                                    <svg fill="gray" class="h-6 w-5 inline" viewBox="-38.39985 -104.22675 332.7987 625.3605">
+                                        <path d="M125.166 285.168l2.795 2.79 127.962-75.638L127.961 0l-2.795 9.5z"></path>
+                                        <path d="M127.962 287.959V0L0 212.32z"></path>
+                                        <path d="M126.386 412.306l1.575 4.6L256 236.587l-128.038 75.6-1.575 1.92z"></path>
+                                        <path d="M0 236.585l127.962 180.32v-104.72z"></path>
+                                        <path d="M127.961 154.159v133.799l127.96-75.637z"></path>
+                                        <path d="M127.96 154.159L0 212.32l127.96 75.637z"></path>
+                                    </svg>
+                                </a>
+                            </header>
+                            <img class="w-full" :src="token.image.replace('ipfs://', 'https://nftstorage.link/ipfs/')" :alt="token.name" />
+                        </article>
 
                         <article class="rounded-lg border my-5">
                             <header class="p-5 border-b">
@@ -43,7 +63,7 @@ fetchToken(address, tokenIndex);
                                 </svg>
                                 <h3 class="font-semibold inline ml-2 text-lg">Description</h3>
                             </header>
-                            <div class="p-5">
+                            <div class="p-5 bg-gray-100">
                                 {{ token.description }}
                             </div>
                         </article>
@@ -66,12 +86,12 @@ fetchToken(address, tokenIndex);
                                 </svg>
                                 <h3 class="font-semibold inline ml-2 text-lg">Properties</h3>
                             </header>
-                            <div class="p-5">
+                            <div class="p-5 bg-gray-100">
                                 <ul class="flex flex-wrap">
                                     <li
                                         v-for="(attribute, index) in token.attributes"
                                         :key="index"
-                                        class="rounded-md border border-opensea-200 w-24 text-center py-2 px-5 mr-3 mb-3 bg-opensea-200 bg-opacity-10"
+                                        class="rounded-md border border-opensea-200 min-w-fit text-center py-2 px-5 mr-3 mb-3 bg-opensea-200 bg-opacity-10"
                                     >
                                         <span class="uppercase font-medium text-xs text-opensea-200">{{ attribute.trait_type }}</span>
                                         <p class="font-medium text-slate-700">{{ attribute.value }}</p>
@@ -94,7 +114,7 @@ fetchToken(address, tokenIndex);
                                 </svg>
                                 <h3 class="font-semibold inline ml-2 text-lg">About {{ collection.name }}</h3>
                             </header>
-                            <div class="p-5">
+                            <div class="p-5 bg-gray-100">
                                 <p>{{ collection.description }}</p>
                             </div>
                         </article>
@@ -117,14 +137,61 @@ fetchToken(address, tokenIndex);
                                 </svg>
                                 <h3 class="font-semibold inline ml-2 text-lg">Details</h3>
                             </header>
-                            <div class="p-5">
-                                {{ token.description }}
+                            <div class="p-5 bg-gray-100">
+                                <ul>
+                                    <li class="flex justify-between mb-2">
+                                        Author <span class="font-medium">{{ collection.authorName }}</span>
+                                    </li>
+                                    <li class="flex justify-between mb-2">
+                                        Contract Address
+                                        <span class="font-medium"
+                                            ><a
+                                                :href="`https://rinkeby.etherscan.io/address/${address}`"
+                                                class="text-opensea-400 font-medium"
+                                                target="_blank"
+                                                >{{ shortenAddress(address) }}</a
+                                            ></span
+                                        >
+                                    </li>
+                                    <li class="flex justify-between mb-2">
+                                        Token ID
+                                        <span class="font-medium"
+                                            ><a :href="token.tokenMetadata" class="text-opensea-400 font-medium" target="_blank">{{ tokenIndex }}</a></span
+                                        >
+                                    </li>
+                                    <li class="flex justify-between mb-2">Token Standard <span class="font-medium">ERC-721</span></li>
+                                    <li class="flex justify-between">Blockchain <span class="font-medium">Ethereum</span></li>
+                                </ul>
                             </div>
                         </article>
                     </aside>
                     <section class="w-full sm:w-2/3 md:w-3/5 pt-1 px-2">
-                        <h2 class="h4">{{ collection.authorName }}</h2>
-                        <h1 class="h2">{{ token.name }}</h1>
+                        <div class="flex justify-between">
+                            <div>
+                                <h3 class="mb-2">
+                                    <router-link
+                                        :to="{ name: 'collection', params: { id: collection.index, slug: toKebabCase(collection.name) } }"
+                                        class="font-medium text-opensea-400"
+                                    >
+                                        {{ collection.name }}
+                                    </router-link>
+                                    <svg aria-label="verified-icon" class="w-6 h-6 inline ml-1" fill="none" viewBox="0 0 30 30">
+                                        <path
+                                            fill="#2081E2"
+                                            d="M13.474 2.80108C14.2729 1.85822 15.7271 1.85822 16.526 2.80108L17.4886 3.9373C17.9785 4.51548 18.753 4.76715 19.4892 4.58733L20.9358 4.23394C22.1363 3.94069 23.3128 4.79547 23.4049 6.0278L23.5158 7.51286C23.5723 8.26854 24.051 8.92742 24.7522 9.21463L26.1303 9.77906C27.2739 10.2474 27.7233 11.6305 27.0734 12.6816L26.2903 13.9482C25.8918 14.5928 25.8918 15.4072 26.2903 16.0518L27.0734 17.3184C27.7233 18.3695 27.2739 19.7526 26.1303 20.2209L24.7522 20.7854C24.051 21.0726 23.5723 21.7315 23.5158 22.4871L23.4049 23.9722C23.3128 25.2045 22.1363 26.0593 20.9358 25.7661L19.4892 25.4127C18.753 25.2328 17.9785 25.4845 17.4886 26.0627L16.526 27.1989C15.7271 28.1418 14.2729 28.1418 13.474 27.1989L12.5114 26.0627C12.0215 25.4845 11.247 25.2328 10.5108 25.4127L9.06418 25.7661C7.86371 26.0593 6.6872 25.2045 6.59513 23.9722L6.48419 22.4871C6.42773 21.7315 5.94903 21.0726 5.24777 20.7854L3.86969 20.2209C2.72612 19.7526 2.27673 18.3695 2.9266 17.3184L3.70973 16.0518C4.10824 15.4072 4.10824 14.5928 3.70973 13.9482L2.9266 12.6816C2.27673 11.6305 2.72612 10.2474 3.86969 9.77906L5.24777 9.21463C5.94903 8.92742 6.42773 8.26854 6.48419 7.51286L6.59513 6.0278C6.6872 4.79547 7.86371 3.94069 9.06418 4.23394L10.5108 4.58733C11.247 4.76715 12.0215 4.51548 12.5114 3.9373L13.474 2.80108Z"
+                                        ></path>
+                                        <path
+                                            d="M13.5 17.625L10.875 15L10 15.875L13.5 19.375L21 11.875L20.125 11L13.5 17.625Z"
+                                            fill="white"
+                                            stroke="white"
+                                        ></path>
+                                    </svg>
+                                </h3>
+                                <h1 class="h2">{{ token.name }}</h1>
+                            </div>
+
+                            <button class="btn text-white bg-blue-600 hover:bg-blue-700 w-full sm:w-auto sm:mr-4 rounded-lg text-right self-start">Sell</button>
+                        </div>
 
                         <article class="rounded-lg border my-5">
                             <header class="p-5 border-b">
@@ -140,8 +207,24 @@ fetchToken(address, tokenIndex);
                                 </svg>
                                 <h3 class="font-semibold inline ml-2 text-lg">No sales</h3>
                             </header>
-                            <div class="p-5">
-                                <button>Make an offer</button>
+                            <div class="p-5 bg-gray-100">
+                                <button class="btn text-white bg-blue-600 hover:bg-blue-700 w-full sm:w-auto sm:mr-4 rounded-lg">
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        class="h-6 w-6 mr-2"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+                                        />
+                                    </svg>
+                                    Buy now
+                                </button>
                             </div>
                         </article>
 
@@ -163,7 +246,7 @@ fetchToken(address, tokenIndex);
                                 </svg>
                                 <h3 class="font-semibold inline ml-2 text-lg ml-2 text-lg">Listings</h3>
                             </header>
-                            <div class="p-5">
+                            <div class="p-5 bg-gray-100">
                                 <button>No listings yet</button>
                             </div>
                         </article>

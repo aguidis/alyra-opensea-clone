@@ -5,7 +5,7 @@
                 <nav class="flex flex-grow">
                     <ul class="flex flex-grow justify-start flex-wrap items-center">
                         <li>
-                            <router-link to="/" class="block" aria-label="Cruip">
+                            <router-link :to="{ name: 'home' }" class="block" aria-label="Cruip">
                                 <svg class="w-8 h-8" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
                                     <defs>
                                         <radialGradient id="header-logo" cx="21.152%" cy="86.063%" fx="21.152%" fy="86.063%" r="79.941%">
