@@ -40,7 +40,7 @@ const toKebabCase = (str) => {
                                 by <a href="#" class="text-blue-500 hover:text-blue-700">{{ item.authorName }}</a>
                             </p>
 
-                            <p class="px-10 py-2 mb-5 text-gray-500">
+                            <p class="px-10 py-2 mb-5 text-gray-600">
                                 {{ item.description }}
                             </p>
                         </article>

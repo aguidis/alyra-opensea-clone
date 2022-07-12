@@ -3,6 +3,7 @@ import Homepage from './Home.vue';
 import Explore from './Explore.vue';
 import Collection from './Collection.vue';
 import Token from './Token.vue';
+import TokenSell from './TokenSell.vue';
 
 const routes = [
     {
@@ -24,6 +25,11 @@ const routes = [
         path: '/assets/ethereum/:address/:index',
         name: 'token',
         component: Token
+    },
+    {
+        path: '/assets/ethereum/:address/:index/sell',
+        name: 'token_sell',
+        component: TokenSell
     }
 ];
 

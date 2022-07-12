@@ -1,5 +1,8 @@
 <template>
-    <header class="bg-white fixed w-full z-30 md:bg-opacity-90 transition duration-300 ease-in-out" :class="`${!top && 'bg-white backdrop-blur-sm shadow-lg'}`">
+    <header
+        class="bg-white fixed w-full z-30 md:bg-opacity-90 transition duration-300 ease-in-out"
+        :class="`${(!top || forceShadow) && 'bg-white backdrop-blur-sm shadow-lg'}`"
+    >
         <div class="max-w-6xl mx-auto px-5 sm:px-6">
             <div class="flex items-center justify-between h-16 md:h-20">
                 <nav class="flex flex-grow">
@@ -37,31 +40,31 @@
     </header>
 </template>
 
-<script>
+<script setup>
 import { ref } from 'vue';
 import { useWalletStore } from '../stores/wallet-store';
 import ConnectButton from './ConnectButton.vue';
 
-export default {
-    components: { ConnectButton },
-    setup() {
-        const top = ref(true);
-        const scrollHandler = () => {
-            top.value = window.pageYOffset <= 10;
-        };
-        window.addEventListener('scroll', scrollHandler);
-
-        const wallet = useWalletStore();
-
-        if (wallet.hasCachedProvider()) {
-            try {
-                wallet.connect();
-            } catch (error) {
-                console.log(`Wallet connect error: ${error}`);
-            }
-        }
-
-        return { top };
+const props = defineProps({
+    forceShadow: {
+        type: Boolean,
+        default: false
     }
+});
+
+const top = ref(true);
+const scrollHandler = () => {
+    top.value = window.pageYOffset <= 10;
 };
+window.addEventListener('scroll', scrollHandler);
+
+const wallet = useWalletStore();
+
+if (wallet.hasCachedProvider()) {
+    try {
+        wallet.connect();
+    } catch (error) {
+        console.log(`Wallet connect error: ${error}`);
+    }
+}
 </script>

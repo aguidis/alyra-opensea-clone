@@ -10,6 +10,7 @@ error NotListed(address nftAddress, uint256 tokenId);
 error PriceMustBeAboveZero();
 error PriceNotMet(address nftAddress, uint256 tokenId, uint256 price);
 error NoProceeds();
+error NotApprovedForMarketplace();
 error NotOwner();
 
 contract MarketplaceNFT is ReentrancyGuard {
@@ -144,7 +145,7 @@ contract MarketplaceNFT is ReentrancyGuard {
         IERC721 nft = IERC721(nftAddress);
 
         if (nft.getApproved(tokenId) != address(this)) {
-            nft.approve(address(this), tokenId);
+            revert NotApprovedForMarketplace();
         }
 
         listings[nftAddress][tokenId] = Listing(price, msg.sender);

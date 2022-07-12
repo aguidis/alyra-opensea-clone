@@ -1,4 +1,5 @@
-import { StaticJsonRpcProvider } from '@ethersproject/providers';
+import { StaticJsonRpcProvider, Web3Provider } from '@ethersproject/providers';
+import { useWalletStore } from './wallet-store';
 import MarketplaceNFT from '../contracts/MarketplaceNFT.json';
 import GenericNFT from '../contracts/PokemonNFT.json';
 import { ethers } from 'ethers';
@@ -8,11 +9,11 @@ import { defineStore } from 'pinia';
 import { DEFAULT_NETWORK } from '../constants/blockchain';
 import { getNetworkParams } from '../helpers/network-params';
 
-const provider = new StaticJsonRpcProvider(getNetworkParams().rpcUrls[0]);
-const signer = provider.getSigner();
+const readOnlyProvider = new StaticJsonRpcProvider(getNetworkParams().rpcUrls[0]);
+const signer = readOnlyProvider.getSigner();
 
-const contractNetwork = MarketplaceNFT.networks[DEFAULT_NETWORK];
-const maketplaceContract = new ethers.Contract(contractNetwork.address, MarketplaceNFT.abi, signer);
+const marketplaceNetwork = MarketplaceNFT.networks[DEFAULT_NETWORK];
+const readOnlyMarketplaceContract = new ethers.Contract(marketplaceNetwork.address, MarketplaceNFT.abi, signer);
 
 export const useCollectionStore = defineStore({
     id: 'collection',
@@ -34,18 +35,16 @@ export const useCollectionStore = defineStore({
             }
 
             try {
-                const collectionCount = await maketplaceContract.getCollectionCount();
+                const collectionCount = await readOnlyMarketplaceContract.getCollectionCount();
 
                 for (let i = 0; i < parseInt(collectionCount.toString(), 10); i++) {
-                    const collection = await maketplaceContract.getCollectionAtIndex(i);
+                    const collection = await readOnlyMarketplaceContract.getCollectionAtIndex(i);
 
                     const nftContract = new ethers.Contract(collection.nftAddress, GenericNFT.abi, signer);
 
                     nftContract
                         .tokenByIndex(0)
                         .then((tokenIndex) => {
-                            console.log('tokenIndex', tokenIndex);
-
                             return nftContract.tokenURI(tokenIndex);
                         })
                         .then((tokenURI) => {
@@ -70,9 +69,9 @@ export const useCollectionStore = defineStore({
 
             try {
                 if (ethers.utils.isAddress(identifier)) {
-                    this.collection = await maketplaceContract.getCollectionByAddress(identifier);
+                    this.collection = await readOnlyMarketplaceContract.getCollectionByAddress(identifier);
                 } else {
-                    this.collection = await maketplaceContract.getCollectionAtIndex(identifier);
+                    this.collection = await readOnlyMarketplaceContract.getCollectionAtIndex(identifier);
                 }
             } catch (error) {
                 this.error = error;
@@ -93,16 +92,32 @@ export const useCollectionStore = defineStore({
                 totalSupply = parseInt(totalSupply.toString(), 10);
                 const max = totalSupply > 10 ? 9 : totalSupply;
 
-                // Promise.all()
                 const grog = [...Array(max).keys()].map((i) => {
+                    let currentTokenIndex;
+                    let currentTokenMetadata;
+
                     return nftContract
                         .tokenByIndex(i)
                         .then((tokenIndex) => {
+                            currentTokenIndex = tokenIndex;
                             return nftContract.tokenURI(tokenIndex);
                         })
                         .then((tokenURI) => {
                             const ipfsGateway = tokenURI.replace('ipfs://', 'https://nftstorage.link/ipfs/');
                             return fetch(ipfsGateway).then((metadata) => metadata.json());
+                        })
+                        .then((metadata) => {
+                            currentTokenMetadata = metadata;
+                            return readOnlyMarketplaceContract.getListing(address, currentTokenIndex);
+                        })
+                        .then((listing) => {
+                            return {
+                                ...currentTokenMetadata,
+                                listing: {
+                                    price: parseInt(listing.price.toString(), 10),
+                                    seller: listing.seller
+                                }
+                            };
                         });
                 });
 
@@ -117,9 +132,6 @@ export const useCollectionStore = defineStore({
         async fetchToken(address, tokenIndex) {
             this.loading = true;
             this.token = null;
-
-            console.log('address', address);
-            console.log('tokenIndex', tokenIndex);
 
             try {
                 const nftContract = new ethers.Contract(address, GenericNFT.abi, signer);
@@ -140,10 +152,12 @@ export const useCollectionStore = defineStore({
 
                 this.tokenMetadata = metadataUrl;
                 const token = await tokenMetadata.json();
-                const listing = await maketplaceContract.getListing(address, tokenIndex);
+                const listing = await readOnlyMarketplaceContract.getListing(address, tokenIndex);
+                const owner = await nftContract.ownerOf(tokenIndex);
 
                 this.token = {
                     ...token,
+                    owner: owner,
                     tokenMetadata: metadataUrl,
                     listing: {
                         price: parseInt(listing.price.toString(), 10),
@@ -155,6 +169,43 @@ export const useCollectionStore = defineStore({
             } finally {
                 this.loading = false;
             }
+        },
+        async listItem(nftAddress, tokenId, price) {
+            this.loading = true;
+
+            try {
+                const { state: wallet } = useWalletStore();
+                const signer = wallet.provider.getSigner();
+
+                // First approve Marketplace to apply changes on behalf of the owner
+                const nftContract = new ethers.Contract(nftAddress, GenericNFT.abi, signer);
+
+                const nftOperator = await nftContract.getApproved(tokenId);
+
+                if (!nftOperator || nftOperator !== marketplaceNetwork.address) {
+                    await nftContract.approve(marketplaceNetwork.address, tokenId);
+                }
+
+                // Then list item into marketplace
+                const marketplaceContract = new ethers.Contract(marketplaceNetwork.address, MarketplaceNFT.abi, signer);
+                const tx = await marketplaceContract.listItem(nftAddress, tokenId, price);
+                // Wait for one block confirmation. The transaction has been mined at this point.
+                const receipt = await tx.wait();
+
+                const latestEvent = receipt.events[0];
+                if (receipt.events.length === 0 || latestEvent.event !== 'ItemListed') {
+                    throw 'Listing token attempt not confirmed.';
+                }
+
+                this.token.listing.price = parseInt(latestEvent.args.price.toString());
+            } catch (error) {
+                this.error = error;
+            } finally {
+                this.loading = false;
+            }
+        },
+        test(price) {
+            this.token.listing.price = price;
         }
     }
 });

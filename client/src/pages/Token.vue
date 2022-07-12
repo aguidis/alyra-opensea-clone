@@ -9,7 +9,7 @@ const route = useRoute();
 const address = route.params.address;
 const tokenIndex = route.params.index;
 
-const { collection, token, loading } = storeToRefs(useCollectionStore());
+const { collection, token } = storeToRefs(useCollectionStore());
 const { fetchCollection, fetchToken } = useCollectionStore();
 
 fetchCollection(address);
@@ -144,20 +144,13 @@ const toKebabCase = (str) => {
                                     </li>
                                     <li class="flex justify-between mb-2">
                                         Contract Address
-                                        <span class="font-medium"
-                                            ><a
-                                                :href="`https://rinkeby.etherscan.io/address/${address}`"
-                                                class="text-opensea-400 font-medium"
-                                                target="_blank"
-                                                >{{ shortenAddress(address) }}</a
-                                            ></span
-                                        >
+                                        <a :href="`https://rinkeby.etherscan.io/address/${address}`" class="text-opensea-400 font-medium" target="_blank">
+                                            {{ shortenAddress(address) }}
+                                        </a>
                                     </li>
                                     <li class="flex justify-between mb-2">
                                         Token ID
-                                        <span class="font-medium"
-                                            ><a :href="token.tokenMetadata" class="text-opensea-400 font-medium" target="_blank">{{ tokenIndex }}</a></span
-                                        >
+                                        <a :href="token.tokenMetadata" class="text-opensea-400 font-medium" target="_blank">{{ tokenIndex }}</a>
                                     </li>
                                     <li class="flex justify-between mb-2">Token Standard <span class="font-medium">ERC-721</span></li>
                                     <li class="flex justify-between">Blockchain <span class="font-medium">Ethereum</span></li>
@@ -165,7 +158,7 @@ const toKebabCase = (str) => {
                             </div>
                         </article>
                     </aside>
-                    <section class="w-full sm:w-2/3 md:w-3/5 pt-1 px-2">
+                    <section class="w-full sm:w-2/3 md:w-3/5 px-2">
                         <div class="flex justify-between">
                             <div>
                                 <h3 class="mb-2">
@@ -190,7 +183,12 @@ const toKebabCase = (str) => {
                                 <h1 class="h2">{{ token.name }}</h1>
                             </div>
 
-                            <button class="btn text-white bg-blue-600 hover:bg-blue-700 w-full sm:w-auto sm:mr-4 rounded-lg text-right self-start">Sell</button>
+                            <router-link
+                                :to="{ name: 'token_sell', params: { address: address, index: tokenIndex } }"
+                                class="btn text-white bg-blue-600 hover:bg-blue-700 w-full sm:w-auto sm:mr-4 rounded-lg self-start"
+                            >
+                                Sell
+                            </router-link>
                         </div>
 
                         <article class="rounded-lg border my-5">
@@ -203,11 +201,20 @@ const toKebabCase = (str) => {
                                     stroke="currentColor"
                                     stroke-width="2"
                                 >
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+                                    />
                                 </svg>
-                                <h3 class="font-semibold inline ml-2 text-lg">No sales</h3>
+                                <h3 class="font-semibold inline ml-2 text-lg">{{ token.listing.price > 0 ? 'Active sale' : 'No sales' }}</h3>
                             </header>
-                            <div class="p-5 bg-gray-100">
+                            <div v-if="token.listing.price > 0" class="p-5 bg-gray-100">
+                                <p class="font-medium text-gray-600 mb-2">Current price</p>
+                                <div class="flex items-center mb-5">
+                                    <img alt="ETH" class="h-6 mr-3" src="https://openseauserdata.com/files/6f8e2979d428180222796ff4a33ab929.svg" />
+                                    <p class="h3">{{ token.listing.price }}</p>
+                                </div>
                                 <button class="btn text-white bg-blue-600 hover:bg-blue-700 w-full sm:w-auto sm:mr-4 rounded-lg">
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
@@ -225,6 +232,9 @@ const toKebabCase = (str) => {
                                     </svg>
                                     Buy now
                                 </button>
+                            </div>
+                            <div v-else class="p-5 bg-gray-100">
+                                <p class="font-medium">This token is not for sale yet.</p>
                             </div>
                         </article>
 
