@@ -154,6 +154,27 @@ contract MarketplaceNFT is ReentrancyGuard {
     }
 
     /*
+     * @notice Method for updating listing
+     *
+     * @param nftAddress Address of NFT contract
+     * @param tokenId Token ID of NFT
+     * @param newPrice Price in Wei of the item
+     */
+    function updateListing(
+        address nftAddress,
+        uint256 tokenId,
+        uint256 newPrice
+    )
+    external
+    isListed(nftAddress, tokenId)
+    nonReentrant
+    isOwner(nftAddress, tokenId, msg.sender)
+    {
+        listings[nftAddress][tokenId].price = newPrice;
+        emit ItemListed(tokenId, nftAddress, msg.sender, newPrice);
+    }
+
+    /*
      * @notice Method for cancelling listing
      *
      * @param nftAddress Address of NFT contract
@@ -197,27 +218,6 @@ contract MarketplaceNFT is ReentrancyGuard {
         IERC721(nftAddress).safeTransferFrom(listedItem.seller, msg.sender, tokenId);
 
         emit ItemBought(tokenId, nftAddress, msg.sender, listedItem.price);
-    }
-
-    /*
-     * @notice Method for updating listing
-     *
-     * @param nftAddress Address of NFT contract
-     * @param tokenId Token ID of NFT
-     * @param newPrice Price in Wei of the item
-     */
-    function updateListing(
-        address nftAddress,
-        uint256 tokenId,
-        uint256 newPrice
-    )
-    external
-    isListed(nftAddress, tokenId)
-    nonReentrant
-    isOwner(nftAddress, tokenId, msg.sender)
-    {
-        listings[nftAddress][tokenId].price = newPrice;
-        emit ItemListed(tokenId, nftAddress, msg.sender, newPrice);
     }
 
     /*

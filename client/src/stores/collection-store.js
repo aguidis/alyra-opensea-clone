@@ -1,4 +1,4 @@
-import { StaticJsonRpcProvider, Web3Provider } from '@ethersproject/providers';
+import { StaticJsonRpcProvider } from '@ethersproject/providers';
 import { useWalletStore } from './wallet-store';
 import MarketplaceNFT from '../contracts/MarketplaceNFT.json';
 import GenericNFT from '../contracts/PokemonNFT.json';
@@ -13,6 +13,9 @@ const readOnlyProvider = new StaticJsonRpcProvider(getNetworkParams().rpcUrls[0]
 const signer = readOnlyProvider.getSigner();
 
 const marketplaceNetwork = MarketplaceNFT.networks[DEFAULT_NETWORK];
+
+console.log('marketplaceNetwork', marketplaceNetwork.address);
+
 const readOnlyMarketplaceContract = new ethers.Contract(marketplaceNetwork.address, MarketplaceNFT.abi, signer);
 
 export const useCollectionStore = defineStore({
@@ -22,6 +25,7 @@ export const useCollectionStore = defineStore({
         collection: null,
         collectionItems: [],
         token: null,
+        transactionHash: null,
         loading: false,
         error: null
     }),
@@ -192,7 +196,7 @@ export const useCollectionStore = defineStore({
                 // Wait for one block confirmation. The transaction has been mined at this point.
                 const receipt = await tx.wait();
 
-                const latestEvent = receipt.events[0];
+                const latestEvent = receipt.events.at(-1);
                 if (receipt.events.length === 0 || latestEvent.event !== 'ItemListed') {
                     throw 'Listing token attempt not confirmed.';
                 }
@@ -204,8 +208,90 @@ export const useCollectionStore = defineStore({
                 this.loading = false;
             }
         },
-        test(price) {
-            this.token.listing.price = price;
+        async updateListing(nftAddress, tokenId, price) {
+            this.loading = true;
+
+            try {
+                const { state: wallet } = useWalletStore();
+                const signer = wallet.provider.getSigner();
+
+                // Update item price
+                const marketplaceContract = new ethers.Contract(marketplaceNetwork.address, MarketplaceNFT.abi, signer);
+                const tx = await marketplaceContract.updateListing(nftAddress, tokenId, price);
+                // Wait for one block confirmation. The transaction has been mined at this point.
+                const receipt = await tx.wait();
+
+                const latestEvent = receipt.events.at(-1);
+                if (receipt.events.length === 0 || latestEvent.event !== 'ItemListed') {
+                    throw 'Update token listing attempt not confirmed.';
+                }
+
+                this.token.listing.price = parseInt(latestEvent.args.price.toString());
+            } catch (error) {
+                this.error = error;
+            } finally {
+                this.loading = false;
+            }
+        },
+        async cancelListing(nftAddress, tokenId) {
+            this.loading = true;
+
+            try {
+                const { state: wallet } = useWalletStore();
+                const signer = wallet.provider.getSigner();
+
+                // Update item price
+                const marketplaceContract = new ethers.Contract(marketplaceNetwork.address, MarketplaceNFT.abi, signer);
+                const tx = await marketplaceContract.cancelListing(nftAddress, tokenId);
+                // Wait for one block confirmation. The transaction has been mined at this point.
+                const receipt = await tx.wait();
+
+                const latestEvent = receipt.events.at(-1);
+                if (receipt.events.length === 0 || latestEvent.event !== 'ItemCanceled') {
+                    throw 'Token listing cancellation attempt not confirmed.';
+                }
+
+                this.token.listing.price = 0;
+            } catch (error) {
+                this.error = error;
+            } finally {
+                this.loading = false;
+            }
+        },
+        async buyItem(nftAddress, tokenId, price) {
+            console.log('allo');
+            this.loading = true;
+
+            try {
+                const { state: wallet } = useWalletStore();
+                const signer = wallet.provider.getSigner();
+
+                // Update item price
+                const marketplaceContract = new ethers.Contract(marketplaceNetwork.address, MarketplaceNFT.abi, signer);
+
+                let overrides = {
+                    value: ethers.utils.parseEther(price.toString())
+                };
+
+                const tx = await marketplaceContract.buyItem(nftAddress, tokenId, overrides);
+
+                // Wait for one block confirmation. The transaction has been mined at this point.
+                const receipt = await tx.wait();
+
+                this.transactionHash = receipt.transactionHash;
+
+                const latestEvent = receipt.events.at(-1);
+
+                if (receipt.events.length === 0 || latestEvent.event !== 'ItemBought') {
+                    throw 'Token order not confirmed.';
+                }
+
+                this.token.listing.price = 0;
+            } catch (error) {
+                this.error = error;
+            } finally {
+                this.loading = false;
+            }
         }
     }
 });

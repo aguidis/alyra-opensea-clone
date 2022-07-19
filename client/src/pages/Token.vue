@@ -4,16 +4,27 @@ import { storeToRefs } from 'pinia/dist/pinia.esm-browser';
 import { useCollectionStore } from '../stores/collection-store';
 import Header from '../components/Header.vue';
 import { shortenAddress } from '../helpers/address';
+import { computed, watch } from 'vue';
+import { useWalletStore } from '../stores/wallet-store';
 
 const route = useRoute();
 const address = route.params.address;
 const tokenIndex = route.params.index;
+
+const { state: wallet } = storeToRefs(useWalletStore());
 
 const { collection, token } = storeToRefs(useCollectionStore());
 const { fetchCollection, fetchToken } = useCollectionStore();
 
 fetchCollection(address);
 fetchToken(address, tokenIndex);
+
+const isForSale = computed(() => token.value?.listing.price > 0);
+const isOwner = computed(() => wallet.value.address === token.value?.owner);
+
+const canBuy = computed(() => wallet.value.isConnected && isForSale.value && !isOwner.value);
+const createListing = computed(() => wallet.value.isConnected && !isForSale.value && isOwner.value);
+const canUpdateListing = computed(() => wallet.value.isConnected && isForSale.value && isOwner.value);
 
 const toKebabCase = (str) => {
     return str.replace(/\s+/g, '-').toLowerCase();
@@ -183,12 +194,29 @@ const toKebabCase = (str) => {
                                 <h1 class="h2">{{ token.name }}</h1>
                             </div>
 
-                            <router-link
-                                :to="{ name: 'token_sell', params: { address: address, index: tokenIndex } }"
-                                class="btn text-white bg-blue-600 hover:bg-blue-700 w-full sm:w-auto sm:mr-4 rounded-lg self-start"
-                            >
-                                Sell
-                            </router-link>
+                            <div class="flex flex-col">
+                                <router-link
+                                    v-if="createListing"
+                                    :to="{ name: 'token_create_listing', params: { address: address, index: tokenIndex } }"
+                                    class="btn text-white bg-blue-600 hover:bg-blue-700 w-full sm:w-full rounded-lg self-start"
+                                >
+                                    Sell
+                                </router-link>
+                                <router-link
+                                    v-if="canUpdateListing"
+                                    :to="{ name: 'token_update_listing', params: { address: address, index: tokenIndex } }"
+                                    class="btn text-white bg-blue-600 hover:bg-blue-700 w-full sm:w-full rounded-lg self-start mb-3"
+                                >
+                                    Update sale
+                                </router-link>
+                                <router-link
+                                    v-if="canUpdateListing"
+                                    :to="{ name: 'token_cancel_listing', params: { address: address, index: tokenIndex } }"
+                                    class="btn text-white bg-red-600 hover:bg-blue-700 w-full sm:w-full rounded-lg self-start"
+                                >
+                                    Cancel listing
+                                </router-link>
+                            </div>
                         </div>
 
                         <article class="rounded-lg border my-5">
@@ -211,11 +239,15 @@ const toKebabCase = (str) => {
                             </header>
                             <div v-if="token.listing.price > 0" class="p-5 bg-gray-100">
                                 <p class="font-medium text-gray-600 mb-2">Current price</p>
-                                <div class="flex items-center mb-5">
+                                <div class="flex items-center">
                                     <img alt="ETH" class="h-6 mr-3" src="https://openseauserdata.com/files/6f8e2979d428180222796ff4a33ab929.svg" />
                                     <p class="h3">{{ token.listing.price }}</p>
                                 </div>
-                                <button class="btn text-white bg-blue-600 hover:bg-blue-700 w-full sm:w-auto sm:mr-4 rounded-lg">
+                                <router-link
+                                    v-if="canBuy"
+                                    :to="{ name: 'buy_token', params: { address: address, index: tokenIndex } }"
+                                    class="btn text-white bg-blue-600 hover:bg-blue-700 w-full sm:w-auto sm:mr-4 rounded-lg mt-5"
+                                >
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         class="h-6 w-6 mr-2"
@@ -231,7 +263,7 @@ const toKebabCase = (str) => {
                                         />
                                     </svg>
                                     Buy now
-                                </button>
+                                </router-link>
                             </div>
                             <div v-else class="p-5 bg-gray-100">
                                 <p class="font-medium">This token is not for sale yet.</p>

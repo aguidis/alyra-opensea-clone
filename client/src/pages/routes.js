@@ -3,7 +3,10 @@ import Homepage from './Home.vue';
 import Explore from './Explore.vue';
 import Collection from './Collection.vue';
 import Token from './Token.vue';
-import TokenSell from './TokenSell.vue';
+import CreateListing from './CreateListing.vue';
+import UpdateListing from './UpdateListing.vue';
+import CancelListing from './CancelListing.vue';
+import BuyToken from './BuyToken.vue';
 
 const routes = [
     {
@@ -27,9 +30,24 @@ const routes = [
         component: Token
     },
     {
-        path: '/assets/ethereum/:address/:index/sell',
-        name: 'token_sell',
-        component: TokenSell
+        path: '/assets/ethereum/:address/:index/create-listing',
+        name: 'token_create_listing',
+        component: CreateListing
+    },
+    {
+        path: '/assets/ethereum/:address/:index/update-listing',
+        name: 'token_update_listing',
+        component: UpdateListing
+    },
+    {
+        path: '/assets/ethereum/:address/:index/cancel-listing',
+        name: 'token_cancel_listing',
+        component: CancelListing
+    },
+    {
+        path: '/assets/ethereum/:address/:index/buy',
+        name: 'buy_token',
+        component: BuyToken
     }
 ];
 

@@ -14,21 +14,40 @@ const tokenIndex = route.params.index;
 const { state: wallet } = storeToRefs(useWalletStore());
 
 const { collection, token } = storeToRefs(useCollectionStore());
-const { fetchCollection, fetchToken, listItem, test } = useCollectionStore();
+const { fetchCollection, fetchToken, updateListing, test } = useCollectionStore();
 
 fetchCollection(address);
 fetchToken(address, tokenIndex);
 
 const price = ref(0);
-const canSell = computed(() => wallet.value.isConnected && price.value > 0);
+
+watch(token, (value) => {
+    price.value = value.listing.price;
+});
+
+const formValid = computed(() => wallet.value.isConnected && price.value > 0);
 
 const toKebabCase = (str) => {
     return str.replace(/\s+/g, '-').toLowerCase();
 };
 
 const onSubmit = () => {
-    listItem(address, tokenIndex, price.value);
+    updateListing(address, tokenIndex, price.value);
 };
+
+watch(
+    token,
+    (currValue, prevValue) => {
+        if (prevValue === null) {
+            return;
+        }
+
+        router.push({ name: 'token', params: { address: address, index: tokenIndex } });
+    },
+    {
+        deep: true
+    }
+);
 
 watch(
     token,
@@ -141,7 +160,7 @@ watch(
 
                             <button
                                 type="submit"
-                                :disabled="!canSell"
+                                :disabled="!formValid"
                                 class="btn text-white bg-blue-600 hover:bg-blue-700 sm:w-auto sm:mr-4 rounded-lg disabled:opacity-40"
                             >
                                 Complete listing
