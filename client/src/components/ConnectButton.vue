@@ -18,6 +18,10 @@ let onWalletConnectClick = async () => {
     }
 };
 
+const wrongNetwork = computed(() => {
+    return wallet.state.isConnected && wallet.state.providerChainID !== DEFAULT_NETWORK;
+});
+
 const buttonText = computed(() => {
     if (wallet.state.isConnected && wallet.state.providerChainID !== DEFAULT_NETWORK) {
         return 'Wrong Network';
@@ -42,7 +46,11 @@ const buttonText = computed(() => {
             </span>
         </button>
     </div>
-    <button class="btn-sm text-blue-600 bg-white border-blue-600 ml-3" @click.stop="onWalletConnectClick">
+    <button
+        class="btn-sm text-blue-600 bg-white border-blue-600 ml-3"
+        :class="{ 'text-rose-600 border-rose-500': wrongNetwork }"
+        @click.stop="onWalletConnectClick"
+    >
         <span>{{ buttonText }}</span>
     </button>
 </template>

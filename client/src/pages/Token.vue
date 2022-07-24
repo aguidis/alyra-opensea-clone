@@ -1,7 +1,7 @@
 <script setup>
 import { useRoute } from 'vue-router';
 import { storeToRefs } from 'pinia/dist/pinia.esm-browser';
-import { useCollectionStore } from '../stores/collection-store';
+import { useCollectionStore } from '../stores/marketplace-store';
 import Header from '../components/Header.vue';
 import { shortenAddress } from '../helpers/address';
 import { computed, watch } from 'vue';
@@ -41,7 +41,11 @@ const toKebabCase = (str) => {
                     <aside class="w-full sm:w-1/3 md:w-2/5 px-2">
                         <article class="rounded-lg border overflow-hidden">
                             <header class="py-3 px-5 border-b">
-                                <a href="#" class="font-bold text-opensea-400">
+                                <router-link
+                                    v-if="canBuy"
+                                    :to="{ name: 'buy_token', params: { address: address, index: tokenIndex } }"
+                                    class="font-bold text-opensea-400"
+                                >
                                     Buy now
                                     <svg fill="gray" class="h-6 w-5 inline" viewBox="-38.39985 -104.22675 332.7987 625.3605">
                                         <path d="M125.166 285.168l2.795 2.79 127.962-75.638L127.961 0l-2.795 9.5z"></path>
@@ -51,7 +55,18 @@ const toKebabCase = (str) => {
                                         <path d="M127.961 154.159v133.799l127.96-75.637z"></path>
                                         <path d="M127.96 154.159L0 212.32l127.96 75.637z"></path>
                                     </svg>
-                                </a>
+                                </router-link>
+                                <div v-else class="flex items-center">
+                                    <span>{{ token.listing.price }}</span>
+                                    <svg fill="gray" class="h-6 w-5" viewBox="-38.39985 -104.22675 332.7987 625.3605">
+                                        <path d="M125.166 285.168l2.795 2.79 127.962-75.638L127.961 0l-2.795 9.5z"></path>
+                                        <path d="M127.962 287.959V0L0 212.32z"></path>
+                                        <path d="M126.386 412.306l1.575 4.6L256 236.587l-128.038 75.6-1.575 1.92z"></path>
+                                        <path d="M0 236.585l127.962 180.32v-104.72z"></path>
+                                        <path d="M127.961 154.159v133.799l127.96-75.637z"></path>
+                                        <path d="M127.96 154.159L0 212.32l127.96 75.637z"></path>
+                                    </svg>
+                                </div>
                             </header>
                             <img class="w-full" :src="token.image.replace('ipfs://', 'https://nftstorage.link/ipfs/')" :alt="token.name" />
                         </article>
@@ -289,7 +304,35 @@ const toKebabCase = (str) => {
                                 <h3 class="font-semibold inline ml-2 text-lg ml-2 text-lg">Listings</h3>
                             </header>
                             <div class="p-5 bg-gray-100">
-                                <button>No listings yet</button>
+                                <table v-if="token?.listing?.history.length > 0" class="w-full text-sm text-left text-gray-500">
+                                    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                                        <tr>
+                                            <th scope="col" class="py-3 px-6">Price</th>
+                                            <th scope="col" class="py-3 px-6">Seller</th>
+                                            <th scope="col" class="py-3 px-6">Transaction</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="(event, index) in token.listing.history" :key="index" class="bg-white border-b hover:bg-gray-50">
+                                            <th scope="row" class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap">
+                                                {{ event.price }}
+                                            </th>
+                                            <td class="py-4 px-6">
+                                                {{ shortenAddress(event.seller) }}
+                                            </td>
+                                            <td class="py-4 px-6">
+                                                <a
+                                                    :href="`https://rinkeby.etherscan.io/tx/${event.transactionHash}`"
+                                                    class="text-opensea-400 font-medium hover:underline"
+                                                    target="_blank"
+                                                >
+                                                    See
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <p v-else>No listing yet.</p>
                             </div>
                         </article>
                     </section>

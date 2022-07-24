@@ -11,7 +11,9 @@
                     clip-rule="evenodd"
                 />
             </svg>
-            <p class="ml-3 text-md font-bold text-white">An error occurred during the transaction.</p>
+            <p class="ml-3 text-md font-bold text-white">
+                {{ error }}
+            </p>
         </div>
     </div>
 </template>
@@ -21,6 +23,11 @@ const props = defineProps({
     displayToast: {
         type: Boolean,
         required: true
+    },
+    error: {
+        type: Object,
+        required: true,
+        default: null
     }
 });
 </script>

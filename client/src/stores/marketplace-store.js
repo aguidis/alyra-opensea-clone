@@ -1,7 +1,7 @@
 import { StaticJsonRpcProvider } from '@ethersproject/providers';
 import { useWalletStore } from './wallet-store';
 import MarketplaceNFT from '../contracts/MarketplaceNFT.json';
-import GenericNFT from '../contracts/PokemonNFT.json';
+import GenericNFT from '../contracts/GenericNFT.json';
 import { ethers } from 'ethers';
 
 import { defineStore } from 'pinia';
@@ -14,12 +14,10 @@ const signer = readOnlyProvider.getSigner();
 
 const marketplaceNetwork = MarketplaceNFT.networks[DEFAULT_NETWORK];
 
-console.log('marketplaceNetwork', marketplaceNetwork.address);
-
 const readOnlyMarketplaceContract = new ethers.Contract(marketplaceNetwork.address, MarketplaceNFT.abi, signer);
 
 export const useCollectionStore = defineStore({
-    id: 'collection',
+    id: 'marketplace',
     state: () => ({
         collections: [],
         collection: null,
@@ -159,13 +157,26 @@ export const useCollectionStore = defineStore({
                 const listing = await readOnlyMarketplaceContract.getListing(address, tokenIndex);
                 const owner = await nftContract.ownerOf(tokenIndex);
 
+                // Get listing history
+                const filter = readOnlyMarketplaceContract.filters.ItemListed(tokenIndex, address);
+                const logs = await readOnlyMarketplaceContract.queryFilter(filter, 0, 'latest');
+                const listingHistory = logs.map((event) => {
+                    const eventContent = event.args;
+                    return {
+                        price: parseInt(eventContent.price.toString(), 10),
+                        seller: eventContent.seller,
+                        transactionHash: event.transactionHash
+                    };
+                });
+
                 this.token = {
                     ...token,
                     owner: owner,
                     tokenMetadata: metadataUrl,
                     listing: {
                         price: parseInt(listing.price.toString(), 10),
-                        seller: listing.seller
+                        seller: listing.seller,
+                        history: listingHistory
                     }
                 };
             } catch (error) {

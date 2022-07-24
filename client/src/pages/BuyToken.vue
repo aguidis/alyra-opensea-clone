@@ -1,7 +1,7 @@
 <script setup>
 import { useRoute, useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia/dist/pinia.esm-browser';
-import { useCollectionStore } from '../stores/collection-store';
+import { useCollectionStore } from '../stores/marketplace-store';
 import { ref, watch } from 'vue';
 import { useWalletStore } from '../stores/wallet-store';
 import { shortenAddress } from '../helpers/address';

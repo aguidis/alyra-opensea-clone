@@ -4,7 +4,7 @@ import AOS from 'aos';
 
 import { ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import { useCollectionStore } from './stores/collection-store';
+import { useCollectionStore } from './stores/marketplace-store';
 import Loader from './components/Loader.vue';
 import ErrorToast from './components/ErrorToast.vue';
 
@@ -34,16 +34,13 @@ watch(error, () => {
     displayToast.value = true;
 
     setTimeout(() => {
-        console.log('timeout');
         displayToast.value = false;
     }, 3000);
-
-    console.log('error watch', error);
 });
 </script>
 
 <template>
-    <ErrorToast :display-toast="displayToast" />
+    <ErrorToast :display-toast="displayToast" :error="error" />
 
     <Loader v-if="loading" />
     <router-view></router-view>

@@ -1,6 +1,6 @@
 <script setup>
 import { storeToRefs } from 'pinia';
-import { useCollectionStore } from '../stores/collection-store';
+import { useCollectionStore } from '../stores/marketplace-store';
 import Header from '../components/Header.vue';
 
 const { collections } = storeToRefs(useCollectionStore());

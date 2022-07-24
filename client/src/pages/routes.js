@@ -7,6 +7,7 @@ import CreateListing from './CreateListing.vue';
 import UpdateListing from './UpdateListing.vue';
 import CancelListing from './CancelListing.vue';
 import BuyToken from './BuyToken.vue';
+import CreateToken from './CreateToken.vue';
 
 const routes = [
     {
@@ -48,6 +49,11 @@ const routes = [
         path: '/assets/ethereum/:address/:index/buy',
         name: 'buy_token',
         component: BuyToken
+    },
+    {
+        path: '/assets/create',
+        name: 'create_token',
+        component: CreateToken
     }
 ];
 

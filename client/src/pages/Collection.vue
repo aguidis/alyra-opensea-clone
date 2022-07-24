@@ -3,7 +3,7 @@ import { watch } from 'vue';
 import { useRoute } from 'vue-router';
 import Header from '../components/Header.vue';
 import { storeToRefs } from 'pinia/dist/pinia.esm-browser';
-import { useCollectionStore } from '../stores/collection-store';
+import { useCollectionStore } from '../stores/marketplace-store';
 import CollectionItem from '../components/CollectionItem.vue';
 
 const route = useRoute();
