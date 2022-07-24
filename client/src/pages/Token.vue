@@ -4,7 +4,7 @@ import { storeToRefs } from 'pinia/dist/pinia.esm-browser';
 import { useCollectionStore } from '../stores/marketplace-store';
 import Header from '../components/Header.vue';
 import { shortenAddress } from '../helpers/address';
-import { computed, watch } from 'vue';
+import { computed } from 'vue';
 import { useWalletStore } from '../stores/wallet-store';
 
 const route = useRoute();
@@ -57,8 +57,8 @@ const toKebabCase = (str) => {
                                     </svg>
                                 </router-link>
                                 <div v-else class="flex items-center">
-                                    <span>{{ token.listing.price }}</span>
-                                    <svg fill="gray" class="h-6 w-5" viewBox="-38.39985 -104.22675 332.7987 625.3605">
+                                    <span>{{ token.listing.price > 0 ? token.listing.price : 'No listing.' }}</span>
+                                    <svg v-if="token.listing.price > 0" fill="gray" class="h-6 w-5" viewBox="-38.39985 -104.22675 332.7987 625.3605">
                                         <path d="M125.166 285.168l2.795 2.79 127.962-75.638L127.961 0l-2.795 9.5z"></path>
                                         <path d="M127.962 287.959V0L0 212.32z"></path>
                                         <path d="M126.386 412.306l1.575 4.6L256 236.587l-128.038 75.6-1.575 1.92z"></path>
@@ -94,7 +94,7 @@ const toKebabCase = (str) => {
                             </div>
                         </article>
 
-                        <article class="rounded-lg border my-5">
+                        <article v-if="token.attributes.length > 0" class="rounded-lg border my-5">
                             <header class="p-5 border-b">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
