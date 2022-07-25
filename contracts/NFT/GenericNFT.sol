@@ -52,3 +52,4 @@ contract GenericNFT is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
         return super.supportsInterface(interfaceId);
     }
 }
+0#4TXl#eyNk@u8s@W42k

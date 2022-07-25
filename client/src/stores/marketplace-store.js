@@ -138,7 +138,6 @@ export const useCollectionStore = defineStore({
             try {
                 const nftContract = new ethers.Contract(address, GenericNFT.abi, signer);
 
-                // TODO handle infinite scroll pagination
                 let totalSupply = await nftContract.totalSupply();
                 totalSupply = parseInt(totalSupply.toString(), 10);
 
@@ -147,12 +146,12 @@ export const useCollectionStore = defineStore({
                 }
 
                 const tokenId = await nftContract.tokenByIndex(tokenIndex);
+
                 const tokenURI = await nftContract.tokenURI(tokenId);
 
                 const metadataUrl = tokenURI.replace('ipfs://', 'https://nftstorage.link/ipfs/');
                 const tokenMetadata = await fetch(metadataUrl);
 
-                this.tokenMetadata = metadataUrl;
                 const token = await tokenMetadata.json();
                 const listing = await readOnlyMarketplaceContract.getListing(address, tokenIndex);
                 const owner = await nftContract.ownerOf(tokenIndex);

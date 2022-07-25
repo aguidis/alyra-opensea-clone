@@ -36,7 +36,7 @@ const toKebabCase = (str) => {
         <Header />
 
         <main class="flex-grow">
-            <div v-if="collection && token" class="max-w-6xl mx-auto px-4 sm:px-6 pt-32">
+            <div v-if="token" class="max-w-6xl mx-auto px-4 sm:px-6 pt-32">
                 <div class="flex flex-row flex-wrap py-4">
                     <aside class="w-full sm:w-1/3 md:w-2/5 px-2">
                         <article class="rounded-lg border overflow-hidden">
@@ -126,7 +126,7 @@ const toKebabCase = (str) => {
                             </div>
                         </article>
 
-                        <article class="rounded-lg border my-5">
+                        <article v-if="collection.name" class="rounded-lg border my-5">
                             <header class="p-5 border-b">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -165,8 +165,11 @@ const toKebabCase = (str) => {
                             </header>
                             <div class="p-5 bg-gray-100">
                                 <ul>
-                                    <li class="flex justify-between mb-2">
+                                    <li v-if="collection.name" class="flex justify-between mb-2">
                                         Author <span class="font-medium">{{ collection.authorName }}</span>
+                                    </li>
+                                    <li v-else class="flex justify-between mb-2">
+                                        Author <span class="font-medium">{{ shortenAddress(token.owner) }}</span>
                                     </li>
                                     <li class="flex justify-between mb-2">
                                         Contract Address
@@ -187,7 +190,7 @@ const toKebabCase = (str) => {
                     <section class="w-full sm:w-2/3 md:w-3/5 px-2">
                         <div class="flex justify-between">
                             <div>
-                                <h3 class="mb-2">
+                                <h3 v-if="collection.name" class="mb-2">
                                     <router-link
                                         :to="{ name: 'collection', params: { id: collection.index, slug: toKebabCase(collection.name) } }"
                                         class="font-medium text-opensea-400"

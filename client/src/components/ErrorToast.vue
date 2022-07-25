@@ -19,6 +19,8 @@
 </template>
 
 <script setup>
+import { watch } from 'vue';
+
 const props = defineProps({
     displayToast: {
         type: Boolean,
@@ -30,4 +32,11 @@ const props = defineProps({
         default: null
     }
 });
+
+watch(
+    () => props.error,
+    (value) => {
+        console.log('coucou props', value);
+    }
+);
 </script>

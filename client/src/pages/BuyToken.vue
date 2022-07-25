@@ -20,12 +20,6 @@ const { fetchCollection, fetchToken, buyItem } = useCollectionStore();
 fetchCollection(address);
 fetchToken(address, tokenIndex);
 
-/**
- * TODO
- * lister les listing sur la page token
- * faire une passe sur les lien (a href sur l'image a gauche dans la page Token)
- */
-
 /*
  * 1: Complete checkout
  * 2: Confirm checkout

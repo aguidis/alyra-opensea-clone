@@ -12,8 +12,14 @@ const router = useRouter();
 
 const { state: wallet } = storeToRefs(useWalletStore());
 
-const { token } = storeToRefs(useMinterStore());
+const { minterAddress, token } = storeToRefs(useMinterStore());
 const { mint } = useMinterStore();
+
+/*
+ * 1: Mint token
+ * 2: Mint is complete
+ */
+const step = ref(1);
 
 const name = ref();
 const description = ref();
@@ -40,7 +46,10 @@ const onSubmit = async () => {
     });
     */
     // Dev use: ipfs://bafyreid3qxqimzmsssewid7kfv5fcxexopircnrvcdhq4cg3kzrtwblys4/metadata.json
-    //mint();
+
+    const metadataUrl = 'ipfs://bafyreid3qxqimzmsssewid7kfv5fcxexopircnrvcdhq4cg3kzrtwblys4/metadata.json';
+
+    mint(metadataUrl);
 };
 
 watch(
@@ -50,7 +59,7 @@ watch(
             return;
         }
 
-        router.push({ name: 'my_collection' });
+        step.value = 2;
     },
     {
         deep: true
@@ -63,7 +72,7 @@ watch(
         <Header :force-shadow="true" />
 
         <main class="flex-grow">
-            <div class="max-w-6xl mx-auto px-4 sm:px-6 pt-32">
+            <div v-if="step === 1" class="max-w-6xl mx-auto px-4 sm:px-6 pt-32">
                 <h1 class="h2 mb-5 font-bold">Create New Item</h1>
 
                 <div class="p-2 mb-10 bg-indigo-800 items-center text-indigo-100 leading-none lg:rounded-full flex lg:inline-flex" role="alert">
@@ -112,6 +121,24 @@ watch(
                         Create
                     </button>
                 </form>
+            </div>
+
+            <div v-else class="max-w-6xl mx-auto px-4 sm:px-6 pt-32 text-center">
+                <h1 class="h2 mb-5 font-bold">You created {{ token.name }}!</h1>
+
+                <img
+                    class="block border w-2/4 mx-auto hover:scale-110 transition-all rounded-xl"
+                    :src="token.image.replace('ipfs://', 'https://nftstorage.link/ipfs/')"
+                    :alt="token.name"
+                />
+
+                <p class="mt-10 mb-5">
+                    Your are now the proud owner of
+                    <router-link class="font-medium text-opensea-400" :to="{ name: 'token', params: { address: minterAddress, index: token.id } }">{{
+                        token.name
+                    }}</router-link
+                    >.
+                </p>
             </div>
         </main>
     </main>

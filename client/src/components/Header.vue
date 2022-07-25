@@ -23,10 +23,18 @@
                         </li>
                         <li>
                             <router-link
-                                to="/explore-collections"
+                                :to="{ name: 'explore' }"
                                 class="font-medium text-gray-600 hover:text-gray-900 px-5 py-3 flex items-center transition duration-150 ease-in-out"
                             >
                                 Explore
+                            </router-link>
+                        </li>
+                        <li>
+                            <router-link
+                                :to="{ name: 'create_token' }"
+                                class="font-medium text-gray-600 hover:text-gray-900 px-5 py-3 flex items-center transition duration-150 ease-in-out"
+                            >
+                                Create
                             </router-link>
                         </li>
                     </ul>
