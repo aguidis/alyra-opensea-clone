@@ -612,18 +612,31 @@ const data = [
 module.exports = async function (callback) {
     try {
         const accounts = await web3.eth.getAccounts();
-        const owner = accounts[0];
         const contract = await PokemonNFT.deployed();
 
+        let ownerIndex = 0;
+
+        // Assign 15 pokemon per account
         for (let index = 0; index < data.length; index++) {
+            const pokemonNumber = index + 1
+            if (pokemonNumber % 15 === 0 && ownerIndex < 9) {
+                ownerIndex++
+
+                console.log('new account', ownerIndex, accounts[ownerIndex])
+            }
+
+            const owner = accounts[ownerIndex]
+
             const record = data[index];
             console.log(`Minting: ${record["ITEM"]} (${record["IPFS_URL"]})`);
 
             await contract.safeMint(owner, record["IPFS_URL"]);
         }
+
     } catch (error) {
         console.log("error", error);
     }
 
     callback();
 };
+

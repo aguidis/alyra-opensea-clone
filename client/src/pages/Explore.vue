@@ -1,10 +1,10 @@
 <script setup>
 import { storeToRefs } from 'pinia';
-import { useCollectionStore } from '../stores/marketplace-store';
+import { useMarketplaceStore } from '../stores/marketplace-store';
 import Header from '../components/Header.vue';
 
-const { collections } = storeToRefs(useCollectionStore());
-const { fetchCollections } = useCollectionStore();
+const { collections } = storeToRefs(useMarketplaceStore());
+const { fetchCollections } = useMarketplaceStore();
 
 fetchCollections();
 

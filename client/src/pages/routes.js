@@ -8,6 +8,7 @@ import UpdateListing from './UpdateListing.vue';
 import CancelListing from './CancelListing.vue';
 import BuyToken from './BuyToken.vue';
 import CreateToken from './CreateToken.vue';
+import Account from './Account.vue';
 
 const routes = [
     {
@@ -54,6 +55,16 @@ const routes = [
         path: '/assets/create',
         name: 'create_token',
         component: CreateToken
+    },
+    {
+        path: '/assets/create',
+        name: 'create_token',
+        component: CreateToken
+    },
+    {
+        path: '/account',
+        name: 'account',
+        component: Account
     }
 ];
 

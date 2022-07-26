@@ -1,7 +1,7 @@
 <script setup>
 import { useRoute, useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia/dist/pinia.esm-browser';
-import { useCollectionStore } from '../stores/marketplace-store';
+import { useMarketplaceStore } from '../stores/marketplace-store';
 import Header from '../components/Header.vue';
 import { computed, ref, watch } from 'vue';
 import { useWalletStore } from '../stores/wallet-store';
@@ -13,8 +13,8 @@ const tokenIndex = route.params.index;
 
 const { state: wallet } = storeToRefs(useWalletStore());
 
-const { collection, token } = storeToRefs(useCollectionStore());
-const { fetchCollection, fetchToken, cancelListing, test } = useCollectionStore();
+const { collection, token } = storeToRefs(useMarketplaceStore());
+const { fetchCollection, fetchToken, cancelListing, test } = useMarketplaceStore();
 
 fetchCollection(address);
 fetchToken(address, tokenIndex);

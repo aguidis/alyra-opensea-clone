@@ -16,10 +16,11 @@ const marketplaceNetwork = MarketplaceNFT.networks[DEFAULT_NETWORK];
 
 const readOnlyMarketplaceContract = new ethers.Contract(marketplaceNetwork.address, MarketplaceNFT.abi, signer);
 
-export const useCollectionStore = defineStore({
+export const useMarketplaceStore = defineStore({
     id: 'marketplace',
     state: () => ({
         collections: [],
+        accountTokens: [],
         collection: null,
         collectionItems: [],
         token: null,
@@ -44,6 +45,7 @@ export const useCollectionStore = defineStore({
 
                     const nftContract = new ethers.Contract(collection.nftAddress, GenericNFT.abi, signer);
 
+                    // Fetch first item for each collection in order to have an image preview
                     nftContract
                         .tokenByIndex(0)
                         .then((tokenIndex) => {
@@ -94,15 +96,15 @@ export const useCollectionStore = defineStore({
                 totalSupply = parseInt(totalSupply.toString(), 10);
                 const max = totalSupply > 10 ? 9 : totalSupply;
 
-                const grog = [...Array(max).keys()].map((i) => {
-                    let currentTokenIndex;
+                const tokenPromises = [...Array(max).keys()].map((i) => {
+                    let currentTokenId;
                     let currentTokenMetadata;
 
                     return nftContract
                         .tokenByIndex(i)
-                        .then((tokenIndex) => {
-                            currentTokenIndex = tokenIndex;
-                            return nftContract.tokenURI(tokenIndex);
+                        .then((tokenId) => {
+                            currentTokenId = tokenId;
+                            return nftContract.tokenURI(tokenId);
                         })
                         .then((tokenURI) => {
                             const ipfsGateway = tokenURI.replace('ipfs://', 'https://nftstorage.link/ipfs/');
@@ -110,7 +112,7 @@ export const useCollectionStore = defineStore({
                         })
                         .then((metadata) => {
                             currentTokenMetadata = metadata;
-                            return readOnlyMarketplaceContract.getListing(address, currentTokenIndex);
+                            return readOnlyMarketplaceContract.getListing(address, currentTokenId);
                         })
                         .then((listing) => {
                             return {
@@ -123,7 +125,7 @@ export const useCollectionStore = defineStore({
                         });
                 });
 
-                Promise.all(grog).then((values) => {
+                Promise.all(tokenPromises).then((values) => {
                     this.collectionItems = values;
                     this.loading = false;
                 });
@@ -297,6 +299,72 @@ export const useCollectionStore = defineStore({
                 }
 
                 this.token.listing.price = 0;
+            } catch (error) {
+                this.error = error;
+            } finally {
+                this.loading = false;
+            }
+        },
+        async fetchAccountTokens() {
+            this.loading = true;
+
+            if (this.accountTokens.length > 0) {
+                this.loading = false;
+                return;
+            }
+
+            try {
+                const { state: wallet } = useWalletStore();
+                const collectionCount = await readOnlyMarketplaceContract.getCollectionCount();
+
+                let tokenPromises = [];
+
+                const collectionCountInt = parseInt(collectionCount.toString(), 10);
+
+                for (let i = 0; i < collectionCountInt; i++) {
+                    const collection = await readOnlyMarketplaceContract.getCollectionAtIndex(i);
+
+                    const nftContract = new ethers.Contract(collection.nftAddress, GenericNFT.abi, signer);
+                    const balance = await nftContract.balanceOf(wallet.address);
+
+                    const balanceInt = parseInt(balance.toString(), 10);
+                    const promises = [...Array(balanceInt).keys()].map((y) => {
+                        let currentTokenId;
+                        let currentTokenMetadata;
+
+                        return nftContract
+                            .tokenOfOwnerByIndex(wallet.address, y)
+                            .then((tokenId) => {
+                                currentTokenId = tokenId;
+                                return nftContract.tokenURI(tokenId);
+                            })
+                            .then((tokenURI) => {
+                                const ipfsGateway = tokenURI.replace('ipfs://', 'https://nftstorage.link/ipfs/');
+                                return fetch(ipfsGateway).then((metadata) => metadata.json());
+                            })
+                            .then((metadata) => {
+                                currentTokenMetadata = metadata;
+
+                                return readOnlyMarketplaceContract.getListing(collection.nftAddress, currentTokenId);
+                            })
+                            .then((listing) => {
+                                return {
+                                    ...currentTokenMetadata,
+                                    listing: {
+                                        price: parseInt(listing.price.toString(), 10),
+                                        seller: listing.seller
+                                    }
+                                };
+                            });
+                    });
+
+                    tokenPromises = [...tokenPromises, ...promises];
+                }
+
+                Promise.all(tokenPromises).then((values) => {
+                    this.accountTokens = values;
+                    this.loading = false;
+                });
             } catch (error) {
                 this.error = error;
             } finally {

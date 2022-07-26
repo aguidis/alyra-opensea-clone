@@ -4,11 +4,11 @@ import AOS from 'aos';
 
 import { ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import { useCollectionStore } from './stores/marketplace-store';
+import { useMarketplaceStore } from './stores/marketplace-store';
 import Loader from './components/Loader.vue';
 import ErrorToast from './components/ErrorToast.vue';
 
-const { loading, error } = storeToRefs(useCollectionStore());
+const { loading, error } = storeToRefs(useMarketplaceStore());
 
 AOS.init({
     once: true,

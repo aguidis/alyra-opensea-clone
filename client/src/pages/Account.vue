@@ -1,22 +1,16 @@
 <script setup>
-import { watch } from 'vue';
-import { useRoute } from 'vue-router';
-import Header from '../components/Header.vue';
-import { storeToRefs } from 'pinia/dist/pinia.esm-browser';
+import { storeToRefs } from 'pinia';
 import { useMarketplaceStore } from '../stores/marketplace-store';
+import Header from '../components/Header.vue';
+import { useWalletStore } from '../stores/wallet-store';
 import CollectionItem from '../components/CollectionItem.vue';
 
-const route = useRoute();
-const id = route.params.id;
+const { state: wallet } = storeToRefs(useWalletStore());
 
-const { collection, collectionItems, loading } = storeToRefs(useMarketplaceStore());
-const { fetchCollection, fetchCollectionItems } = useMarketplaceStore();
+const { loading, accountTokens } = storeToRefs(useMarketplaceStore());
+const { fetchAccountTokens } = useMarketplaceStore();
 
-fetchCollection(id);
-
-watch(collection, (value) => {
-    fetchCollectionItems(value.nftAddress);
-});
+fetchAccountTokens();
 </script>
 
 <template>
@@ -24,10 +18,10 @@ watch(collection, (value) => {
         <Header />
 
         <main class="flex-grow bg-gray-100">
-            <section v-if="collection" class="max-w-6xl mx-auto px-4 sm:px-6">
+            <section class="max-w-6xl mx-auto px-4 sm:px-6">
                 <div class="py-12 md:py-20">
                     <div class="max-w-3xl mx-auto text-center py-12 md:py-20">
-                        <h1 class="h2">{{ collection.name }}</h1>
+                        <h1 class="h2">You collected NFTs</h1>
                     </div>
 
                     <section v-if="loading" class="max-w-sm mx-auto grid gap-6 md:grid-cols-4 lg:grid-cols-4 items-start md:max-w-2xl lg:max-w-none">
@@ -41,13 +35,7 @@ watch(collection, (value) => {
                     </section>
 
                     <section class="max-w-sm mx-auto grid gap-6 md:grid-cols-4 lg:grid-cols-4 items-start md:max-w-2xl lg:max-w-none">
-                        <CollectionItem
-                            v-for="(item, index) in collectionItems"
-                            :key="index"
-                            :token-index="index"
-                            :item="item"
-                            :address="collection.nftAddress"
-                        />
+                        <CollectionItem v-for="(item, index) in accountTokens" :key="index" :token-index="index" :item="item" :address="'123'" />
                     </section>
                 </div>
             </section>
