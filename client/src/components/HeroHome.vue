@@ -33,7 +33,9 @@
                                 </router-link>
                             </div>
                             <div>
-                                <a class="btn text-blue-600 bg-white border-blue-600 w-full sm:w-auto sm:ml-4" href="#0"> Create </a>
+                                <router-link :to="{ name: 'create_token' }" class="btn text-blue-600 bg-white border-blue-600 w-full sm:w-auto sm:ml-4">
+                                    Create
+                                </router-link>
                             </div>
                         </div>
                     </div>

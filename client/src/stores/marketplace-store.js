@@ -349,7 +349,9 @@ export const useMarketplaceStore = defineStore({
                             })
                             .then((listing) => {
                                 return {
+                                    id: currentTokenId.toString(),
                                     ...currentTokenMetadata,
+                                    nftAddress: collection.nftAddress,
                                     listing: {
                                         price: parseInt(listing.price.toString(), 10),
                                         seller: listing.seller

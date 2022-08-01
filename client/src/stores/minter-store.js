@@ -53,6 +53,12 @@ export const useMinterStore = defineStore({
 
                 const token = await tokenMetadata.json();
 
+                console.log('token', {
+                    id: tokenId,
+                    ...token,
+                    tokenMetadata: metadataUrl
+                });
+
                 this.token = {
                     id: tokenId,
                     ...token,
