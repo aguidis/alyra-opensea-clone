@@ -9,6 +9,7 @@ import CancelListing from './CancelListing.vue';
 import BuyToken from './BuyToken.vue';
 import CreateToken from './CreateToken.vue';
 import Account from './Account.vue';
+import Collections from './Collections.vue';
 
 const routes = [
     {
@@ -65,6 +66,11 @@ const routes = [
         path: '/account',
         name: 'account',
         component: Account
+    },
+    {
+        path: '/collections',
+        name: 'collections',
+        component: Collections
     }
 ];
 

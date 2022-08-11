@@ -25,6 +25,9 @@ if (hasCachedProvider()) {
         console.log(`Wallet connect error: ${error}`);
     }
 }
+
+const submenu = ref(false)
+const toggleSubmenu = () => submenu.value = !submenu.value
 </script>
 
 <template>
@@ -66,13 +69,28 @@ if (hasCachedProvider()) {
                                 Create
                             </router-link>
                         </li>
-                        <li v-if="state.isConnected">
-                            <router-link
-                                :to="{ name: 'account' }"
-                                class="font-medium text-gray-600 hover:text-gray-900 px-5 py-3 flex items-center transition duration-150 ease-in-out"
-                            >
-                                Account
-                            </router-link>
+                        <li
+                            v-if="state.isConnected"
+                            class="relative font-medium text-gray-600 hover:text-gray-900 px-5 py-3 flex items-center transition duration-150 ease-in-out cursor-pointer"
+                            @click="toggleSubmenu"
+                        >
+                            Account
+                            <!-- Dropdown menu -->
+                            <div v-show="submenu" class="absolute top-10 w-44 bg-white rounded divide-y divide-gray-100 shadow bg-gray-800">
+                                <ul class="text-sm text-gray-700 dark:text-gray-200">
+                                    <li>
+                                        <router-link
+                                            :to="{ name: 'account' }"
+                                            class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                        >
+                                            Profile
+                                        </router-link>
+                                    </li>
+                                    <li>
+                                        <a href="#" class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">My Collections</a>
+                                    </li>
+                                </ul>
+                            </div>
                         </li>
                     </ul>
                 </nav>

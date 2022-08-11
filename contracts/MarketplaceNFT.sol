@@ -3,6 +3,7 @@ pragma solidity ^0.8.14;
 
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 error CollectionAlreadyRegistered(address nftAddress);
 error AlreadyListed(address nftAddress, uint256 tokenId);
@@ -13,7 +14,7 @@ error NoProceeds();
 error NotApprovedForMarketplace();
 error NotOwner();
 
-contract MarketplaceNFT is ReentrancyGuard {
+contract MarketplaceNFT is ReentrancyGuard, Ownable {
     struct Listing {
         uint256 price;
         address seller;
@@ -55,9 +56,12 @@ contract MarketplaceNFT is ReentrancyGuard {
     );
 
     address[] private collectionIndex;
+    address[] private privateCollectionIndex;
 
     /// @notice NFT address -> Collection
     mapping(address => Collection) private collections;
+    /// @notice NFT address -> Private collection (created by users)
+    mapping(address => Collection) private privateCollections;
     /// @notice NFT address -> Token ID -> Listing
     mapping(address => mapping(uint256 => Listing)) private listings;
     /// @notice Seller address -> ETH amount from sales
@@ -70,7 +74,17 @@ contract MarketplaceNFT is ReentrancyGuard {
     modifier notRegistered(
         address nftAddress
     ) {
-        if (collectionIndex.length > 0 && collectionIndex[collections[nftAddress].index] == nftAddress) {
+        if (collectionIndex.length > 0 && collections[nftAddress].nftAddress == nftAddress) {
+            revert CollectionAlreadyRegistered(nftAddress);
+        }
+
+        _;
+    }
+
+    modifier notRegisteredPrivate(
+        address nftAddress
+    ) {
+        if (privateCollectionIndex.length > 0 && collections[nftAddress].nftAddress == nftAddress) {
             revert CollectionAlreadyRegistered(nftAddress);
         }
 
@@ -238,14 +252,17 @@ contract MarketplaceNFT is ReentrancyGuard {
     }
 
     /*
-     * @notice Method for registering an NFT collection
+     * @notice Method for registering a NFT collection
      *
      * @param name Name of NFT collection
      * @param description Description of NFT collection
      * @param nftAddress Address of NFT contract
      * @param authorName Author name of NFT collection
      */
-    function addCollection(string memory name, string memory description, address nftAddress, string memory authorName) public notRegistered(nftAddress) {
+    function addCollection(string memory name, string memory description, address nftAddress, string memory authorName)
+    public
+    notRegistered(nftAddress)
+    onlyOwner {
         collectionIndex.push(nftAddress);
 
         collections[nftAddress].name = name;
@@ -258,6 +275,29 @@ contract MarketplaceNFT is ReentrancyGuard {
         emit CollectionRegistered(name, nftAddress, msg.sender);
     }
 
+    /*
+     * @notice Method for registering a private NFT collection (created manually by the user)
+     *
+     * @param name Name of NFT collection
+     * @param description Description of NFT collection
+     * @param nftAddress Address of NFT contract
+     * @param authorName Author name of NFT collection
+     */
+    function addPrivateCollection(string memory name, string memory description, address nftAddress, string memory authorName)
+    external
+    notRegisteredPrivate(nftAddress)
+    onlyOwner {
+        privateCollectionIndex.push(nftAddress);
+
+        privateCollections[nftAddress].name = name;
+        privateCollections[nftAddress].description = description;
+        privateCollections[nftAddress].nftAddress = nftAddress;
+        privateCollections[nftAddress].authorName = authorName;
+        privateCollections[nftAddress].authorAddress = msg.sender;
+        privateCollections[nftAddress].index = privateCollectionIndex.length - 1;
+
+        emit CollectionRegistered(name, nftAddress, msg.sender);
+    }
 
     //////////////////////
     // Getter Functions //
@@ -310,5 +350,16 @@ contract MarketplaceNFT is ReentrancyGuard {
     returns (Collection memory)
     {
         return collections[contractAddress];
+    }
+
+    /*
+     * @notice Returns the desired private NFT collection metadata by index
+     */
+    function getPrivateCollectionByAddress(address contractAddress)
+    external
+    view
+    returns (Collection memory)
+    {
+        return privateCollections[contractAddress];
     }
 }
