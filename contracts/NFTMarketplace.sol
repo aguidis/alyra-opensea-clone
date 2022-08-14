@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 error CollectionAlreadyRegistered(address nftAddress);
+error CollectionNotRegistered(address nftAddress);
 error AlreadyListed(address nftAddress, uint256 tokenId);
 error NotListed(address nftAddress, uint256 tokenId);
 error PriceMustBeAboveZero();
@@ -14,7 +15,7 @@ error NoProceeds();
 error NotApprovedForMarketplace();
 error NotOwner();
 
-contract MarketplaceNFT is ReentrancyGuard, Ownable {
+contract NFTMarketplace is ReentrancyGuard, Ownable {
     struct Listing {
         uint256 price;
         address seller;
@@ -27,6 +28,7 @@ contract MarketplaceNFT is ReentrancyGuard, Ownable {
         string authorName;
         address authorAddress;
         uint index;
+        bool verified;
     }
 
     event CollectionRegistered(
@@ -81,11 +83,11 @@ contract MarketplaceNFT is ReentrancyGuard, Ownable {
         _;
     }
 
-    modifier notRegisteredPrivate(
+    modifier registered(
         address nftAddress
     ) {
-        if (privateCollectionIndex.length > 0 && collections[nftAddress].nftAddress == nftAddress) {
-            revert CollectionAlreadyRegistered(nftAddress);
+        if (collectionIndex.length == 0 || collections[nftAddress].nftAddress != nftAddress) {
+            revert CollectionNotRegistered(nftAddress);
         }
 
         _;
@@ -261,8 +263,7 @@ contract MarketplaceNFT is ReentrancyGuard, Ownable {
      */
     function addCollection(string memory name, string memory description, address nftAddress, string memory authorName)
     public
-    notRegistered(nftAddress)
-    onlyOwner {
+    notRegistered(nftAddress) {
         collectionIndex.push(nftAddress);
 
         collections[nftAddress].name = name;
@@ -276,27 +277,17 @@ contract MarketplaceNFT is ReentrancyGuard, Ownable {
     }
 
     /*
-     * @notice Method for registering a private NFT collection (created manually by the user)
+     * @notice Method for verifying a NFT collection so it can appeared on the DAPP
      *
-     * @param name Name of NFT collection
-     * @param description Description of NFT collection
      * @param nftAddress Address of NFT contract
-     * @param authorName Author name of NFT collection
      */
-    function addPrivateCollection(string memory name, string memory description, address nftAddress, string memory authorName)
-    external
-    notRegisteredPrivate(nftAddress)
+    function verifyCollection(address nftAddress)
+    public
+    registered(nftAddress)
     onlyOwner {
-        privateCollectionIndex.push(nftAddress);
+        Collection storage collection = collections[nftAddress];
 
-        privateCollections[nftAddress].name = name;
-        privateCollections[nftAddress].description = description;
-        privateCollections[nftAddress].nftAddress = nftAddress;
-        privateCollections[nftAddress].authorName = authorName;
-        privateCollections[nftAddress].authorAddress = msg.sender;
-        privateCollections[nftAddress].index = privateCollectionIndex.length - 1;
-
-        emit CollectionRegistered(name, nftAddress, msg.sender);
+        collection.verified = true;
     }
 
     //////////////////////
@@ -350,16 +341,5 @@ contract MarketplaceNFT is ReentrancyGuard, Ownable {
     returns (Collection memory)
     {
         return collections[contractAddress];
-    }
-
-    /*
-     * @notice Returns the desired private NFT collection metadata by index
-     */
-    function getPrivateCollectionByAddress(address contractAddress)
-    external
-    view
-    returns (Collection memory)
-    {
-        return privateCollections[contractAddress];
     }
 }

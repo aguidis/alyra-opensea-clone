@@ -1,6 +1,6 @@
 import { StaticJsonRpcProvider } from '@ethersproject/providers';
 import { useWalletStore } from './wallet-store';
-import MarketplaceNFT from '../contracts/MarketplaceNFT.json';
+import NFTMarketplace from '../contracts/NFTMarketplace.json';
 import GenericNFT from '../contracts/GenericNFT.json';
 import { ethers } from 'ethers';
 
@@ -12,9 +12,9 @@ import { getNetworkParams } from '../helpers/network-params';
 const readOnlyProvider = new StaticJsonRpcProvider(getNetworkParams().rpcUrls[0]);
 const signer = readOnlyProvider.getSigner();
 
-const marketplaceNetwork = MarketplaceNFT.networks[DEFAULT_NETWORK];
+const marketplaceNetwork = NFTMarketplace.networks[DEFAULT_NETWORK];
 
-const readOnlyMarketplaceContract = new ethers.Contract(marketplaceNetwork.address, MarketplaceNFT.abi, signer);
+const readOnlyMarketplaceContract = new ethers.Contract(marketplaceNetwork.address, NFTMarketplace.abi, signer);
 
 export const useMarketplaceStore = defineStore({
     id: 'marketplace',
@@ -43,6 +43,10 @@ export const useMarketplaceStore = defineStore({
                 for (let i = 0; i < parseInt(collectionCount.toString(), 10); i++) {
                     const collection = await readOnlyMarketplaceContract.getCollectionAtIndex(i);
 
+                    if (!collection.verified) {
+                        continue;
+                    }
+
                     const nftContract = new ethers.Contract(collection.nftAddress, GenericNFT.abi, signer);
 
                     // Fetch first item for each collection in order to have an image preview
@@ -62,6 +66,8 @@ export const useMarketplaceStore = defineStore({
                         });
                 }
             } catch (error) {
+                console.log('error', error);
+
                 this.error = error;
             } finally {
                 this.loading = false;
@@ -203,7 +209,7 @@ export const useMarketplaceStore = defineStore({
                 }
 
                 // Then list item into marketplace
-                const marketplaceContract = new ethers.Contract(marketplaceNetwork.address, MarketplaceNFT.abi, signer);
+                const marketplaceContract = new ethers.Contract(marketplaceNetwork.address, NFTMarketplace.abi, signer);
                 const tx = await marketplaceContract.listItem(nftAddress, tokenId, price);
                 // Wait for one block confirmation. The transaction has been mined at this point.
                 const receipt = await tx.wait();
@@ -228,7 +234,7 @@ export const useMarketplaceStore = defineStore({
                 const signer = wallet.provider.getSigner();
 
                 // Update item price
-                const marketplaceContract = new ethers.Contract(marketplaceNetwork.address, MarketplaceNFT.abi, signer);
+                const marketplaceContract = new ethers.Contract(marketplaceNetwork.address, NFTMarketplace.abi, signer);
                 const tx = await marketplaceContract.updateListing(nftAddress, tokenId, price);
                 // Wait for one block confirmation. The transaction has been mined at this point.
                 const receipt = await tx.wait();
@@ -253,7 +259,7 @@ export const useMarketplaceStore = defineStore({
                 const signer = wallet.provider.getSigner();
 
                 // Update item price
-                const marketplaceContract = new ethers.Contract(marketplaceNetwork.address, MarketplaceNFT.abi, signer);
+                const marketplaceContract = new ethers.Contract(marketplaceNetwork.address, NFTMarketplace.abi, signer);
                 const tx = await marketplaceContract.cancelListing(nftAddress, tokenId);
                 // Wait for one block confirmation. The transaction has been mined at this point.
                 const receipt = await tx.wait();
@@ -279,7 +285,7 @@ export const useMarketplaceStore = defineStore({
                 const signer = wallet.provider.getSigner();
 
                 // Update item price
-                const marketplaceContract = new ethers.Contract(marketplaceNetwork.address, MarketplaceNFT.abi, signer);
+                const marketplaceContract = new ethers.Contract(marketplaceNetwork.address, NFTMarketplace.abi, signer);
 
                 let overrides = {
                     value: ethers.utils.parseEther(price.toString())

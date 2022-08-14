@@ -1,8 +1,8 @@
-const MarketplaceNFT = artifacts.require("MarketplaceNFT");
+const NFTMarketplace = artifacts.require("NFTMarketplace");
 
 module.exports = async function (callback) {
     try {
-        const contract = await MarketplaceNFT.deployed();
+        const contract = await NFTMarketplace.deployed();
 
         let collections = [];
 

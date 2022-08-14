@@ -10,6 +10,7 @@ import BuyToken from './BuyToken.vue';
 import CreateToken from './CreateToken.vue';
 import Account from './Account.vue';
 import Collections from './Collections.vue';
+import CreateCollection from './CreateCollection.vue';
 
 const routes = [
     {
@@ -71,7 +72,12 @@ const routes = [
         path: '/collections',
         name: 'collections',
         component: Collections
-    }
+    },
+    {
+        path: '/collection/create',
+        name: 'create_collection',
+        component: CreateCollection
+    },
 ];
 
 export default function (history) {

@@ -28,12 +28,12 @@ migrate-ganache-marketplace: ## Deploy contracts locally (You need to have a run
 migrate-rinkeby: ## Deploy contracts on Rinkeby testnet
 	$(TRUFFLE) migrate --reset --network rinkeby
 
-mint-ganache-nft: ## Mint to admin (accounts[0]) all NFT
+mint-ganache-nft: ## Mint all NFT to account[0] except for PokeNFT (15 per Ganache account)
 	$(TRUFFLE) exec --network develop scripts/comet-spaceship-nft/mint.js
 	$(TRUFFLE) exec --network develop scripts/poke-nft/mint.js
 	$(TRUFFLE) exec --network develop scripts/snake-nft/mint.js
 
-load-fixtures: ## Load fixtures in MarketplaceNFT
+load-fixtures: ## Load fixtures in NFTMarketplace
 	$(TRUFFLE) exec --network develop scripts/marketplace-nft/collection-fixtures.js
 
 boot-ganache: ## Boot all stuff
@@ -43,8 +43,17 @@ boot-ganache: ## Boot all stuff
 	$(TRUFFLE) exec --network develop scripts/snake-nft/mint.js
 	$(TRUFFLE) exec --network develop scripts/marketplace-nft/collection-fixtures.js
 
-debug-marketplace: ## Debug MarketplaceNFT
+debug-marketplace: ## Debug NFTMarketplace
 	$(TRUFFLE) exec --network develop scripts/marketplace-nft/debug-collections.js
+
+count-collections: ## Debug NFTMarketplace
+	$(TRUFFLE) exec --network develop scripts/marketplace-nft/count-collections.js
+
+debug-factory: ## Debug Factory
+	$(TRUFFLE) exec --network develop scripts/collection-factory/debug.js
+
+debug-factory-owner: ## Debug Factory
+	$(TRUFFLE) exec --network develop scripts/collection-factory/debug-owner.js
 
 ## —— Dapp ————————————————————————————————————————————————————————
 run: ## Start local server

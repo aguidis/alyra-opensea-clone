@@ -21,7 +21,7 @@ fetchAccountTokens();
             <section class="max-w-6xl mx-auto px-4 sm:px-6">
                 <div class="py-12 md:py-20">
                     <div class="max-w-3xl mx-auto text-center py-12 md:py-20">
-                        <h1 class="h2">You collected NFTs</h1>
+                        <h1 class="h2">Your collected NFTs</h1>
                     </div>
 
                     <section v-if="loading" class="max-w-sm mx-auto grid gap-6 md:grid-cols-4 lg:grid-cols-4 items-start md:max-w-2xl lg:max-w-none">

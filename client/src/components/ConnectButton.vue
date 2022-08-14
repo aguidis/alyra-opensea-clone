@@ -36,15 +36,12 @@ const buttonText = computed(() => {
     <div v-if="wallet.state.isConnected" class="p-1 inline-flex items-center bg-black rounded-full font-medium text-center text-white">
         <p class="px-2 text-sm">{{ wallet.state.balance }} ETH</p>
 
-        <button
-            type="button"
-            class="inline-flex items-center px-5 py-2 text-sm font-medium text-center text-white bg-gray-700 rounded-full hover:bg-gray-800 focus:ring-4 focus:ring-gray-300"
-        >
-            {{ shortenAddress(wallet.state.address) }}
+        <div class="inline-flex items-center px-5 py-2 text-sm font-medium text-center text-white bg-gray-700 rounded-full focus:ring-4 focus:ring-gray-300">
+            <span>{{ shortenAddress(wallet.state.address) }}</span>
             <span class="ml-2">
-                <Identicon :account="wallet.state.address" :diameter="30" />
+                <Identicon :account="wallet.state.address" :diameter="16" />
             </span>
-        </button>
+        </div>
     </div>
     <button
         class="btn-sm text-blue-600 bg-white border-blue-600 ml-3"

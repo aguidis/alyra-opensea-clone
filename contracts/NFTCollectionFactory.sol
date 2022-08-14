@@ -2,16 +2,23 @@
 pragma solidity ^0.8.14;
 
 import "./NFT/UpgradableGenericNFT.sol";
-import "./MarketplaceNFT.sol";
+import "./NFTMarketplace.sol";
 
 contract NFTCollectionFactory {
     event NFTCollectionCreated(string _nftName, address _collectionAddress, uint _timestamp);
+
+    /// @notice Marketplace contract address
+    address private marketplaceAddress;
 
     /// @notice Author address -> collection balance
     mapping(address => uint) private ownerBalance;
 
     /// @notice Author address -> collection index -> NFT address
     mapping(address => mapping(uint256 => address)) private ownerCollections;
+
+    constructor(address marketplaceContract) {
+        marketplaceAddress = marketplaceContract;
+    }
 
     /*
      * @notice Deploy the ERC-721 Collection contract of the nft caller to be able to create NFTs later
@@ -22,8 +29,7 @@ contract NFTCollectionFactory {
         string memory _nftName,
         string memory _nftSymbol,
         string memory _nftDescription,
-        string memory _nftAuthorName,
-        address marketplaceAddress
+        string memory _nftAuthorName
     ) external returns (address collectionAddress) {
         // Import the bytecode of the contract to deploy
         bytes memory collectionBytecode = type(UpgradableGenericNFT).creationCode;
@@ -45,8 +51,8 @@ contract NFTCollectionFactory {
         ownerBalance[msg.sender]++;
 
         // Add new collection to the marketplace
-        MarketplaceNFT marketplace = MarketplaceNFT(marketplaceAddress);
-        marketplace.addPrivateCollection(_nftName, _nftDescription, collectionAddress, _nftAuthorName);
+        NFTMarketplace marketplace = NFTMarketplace(marketplaceAddress);
+        marketplace.addCollection(_nftName, _nftDescription, collectionAddress, _nftAuthorName);
 
         emit NFTCollectionCreated(_nftName, collectionAddress, block.timestamp);
     }

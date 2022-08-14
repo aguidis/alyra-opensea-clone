@@ -1,3 +1,3 @@
-- Tester tout le flow de creation et checker que tous les liens marchent  
-- Créer une collection avec la NFT Factory
-- Pouvoir minter des tokens à la volée dans les collections créés
+-   Tester tout le flow de creation et checker que tous les liens marchent
+-   Créer une collection avec la NFT Factory
+-   Pouvoir minter des tokens à la volée dans les collections créés
