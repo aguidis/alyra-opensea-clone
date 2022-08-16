@@ -7,8 +7,8 @@ module.exports = async function (callback) {
 
         const factory = await NFTCollectionFactory.deployed();
 
-        const balance = await factory.getOwnerBalance()
-        const address = await factory.getOwnerCollectionByIndex(0, {from: account1})
+        const balance = await factory.getOwnerBalance(account1)
+        const address = await factory.getOwnerCollectionByIndex(account1, 0)
 
         console.log("balance", balance.toString(), address);
     } catch (error) {

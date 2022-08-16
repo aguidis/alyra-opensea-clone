@@ -10,7 +10,7 @@ const router = useRouter();
 
 const { state: wallet } = storeToRefs(useWalletStore());
 
-const { factoryAddress, collection } = storeToRefs(useCollectionFactoryStore());
+const { newCollection } = storeToRefs(useCollectionFactoryStore());
 const { create } = useCollectionFactoryStore();
 
 /*
@@ -24,19 +24,14 @@ const symbol = ref();
 const description = ref();
 const authorName = ref();
 
-const formValid = computed(() => wallet.value.isConnected
-    && name.value
-    && symbol.value
-    && description.value
-    && authorName.value
-);
+const formValid = computed(() => wallet.value.isConnected && name.value && symbol.value && description.value && authorName.value);
 
 const onSubmit = () => {
-    create(name, symbol, description, authorName);
+    create(name.value, symbol.value, description.value, authorName.value);
 };
 
 watch(
-    collection,
+    newCollection,
     (currValue, prevValue) => {
         step.value = 2;
 
@@ -120,7 +115,7 @@ watch(
             </div>
 
             <div v-else class="max-w-6xl mx-auto px-4 sm:px-6 pt-32 text-center">
-                <h1 class="h2 mb-5 font-bold">You created the collection {{ collection.name }}!</h1>
+                <h1 class="h2 mb-5 font-bold">You created the collection {{ newCollection.name }}!</h1>
 
                 <router-link class="btn text-white bg-blue-600 hover:bg-blue-700 w-full mb-4 sm:w-auto sm:mb-0" :to="{ name: 'collections' }">
                     See your collections

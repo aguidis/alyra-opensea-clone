@@ -321,6 +321,7 @@ export const useMarketplaceStore = defineStore({
 
             try {
                 const { state: wallet } = useWalletStore();
+
                 const collectionCount = await readOnlyMarketplaceContract.getCollectionCount();
 
                 let tokenPromises = [];

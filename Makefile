@@ -38,8 +38,8 @@ load-fixtures: ## Load fixtures in NFTMarketplace
 
 boot-ganache: ## Boot all stuff
 	$(TRUFFLE) migrate --reset --network develop
-	$(TRUFFLE) exec --network develop scripts/comet-spaceship-nft/mint.js
-	$(TRUFFLE) exec --network develop scripts/poke-nft/mint.js
+	#$(TRUFFLE) exec --network develop scripts/comet-spaceship-nft/mint.js
+	#$(TRUFFLE) exec --network develop scripts/poke-nft/mint.js
 	$(TRUFFLE) exec --network develop scripts/snake-nft/mint.js
 	$(TRUFFLE) exec --network develop scripts/marketplace-nft/collection-fixtures.js
 
@@ -49,11 +49,11 @@ debug-marketplace: ## Debug NFTMarketplace
 count-collections: ## Debug NFTMarketplace
 	$(TRUFFLE) exec --network develop scripts/marketplace-nft/count-collections.js
 
-debug-factory: ## Debug Factory
-	$(TRUFFLE) exec --network develop scripts/collection-factory/debug.js
+debug-factory-creation: ## Debug Factory creation
+	$(TRUFFLE) exec --network develop scripts/collection-factory/debug-creation.js
 
-debug-factory-owner: ## Debug Factory
-	$(TRUFFLE) exec --network develop scripts/collection-factory/debug-owner.js
+debug-factory-balance: ## Debug Factory balance
+	$(TRUFFLE) exec --network develop scripts/collection-factory/debug-balance.js
 
 ## —— Dapp ————————————————————————————————————————————————————————
 run: ## Start local server

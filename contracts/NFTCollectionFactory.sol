@@ -22,52 +22,41 @@ contract NFTCollectionFactory {
 
     /*
      * @notice Deploy the ERC-721 Collection contract of the nft caller to be able to create NFTs later
-     *
-     * @return collectionAddress the address of the created collection contract
      */
     function createNFTCollection(
         string memory _nftName,
         string memory _nftSymbol,
         string memory _nftDescription,
         string memory _nftAuthorName
-    ) external returns (address collectionAddress) {
-        // Import the bytecode of the contract to deploy
-        bytes memory collectionBytecode = type(UpgradableGenericNFT).creationCode;
-        // Make a random salt based on the nft name
-        bytes32 salt = keccak256(abi.encodePacked(_nftName));
+    ) external {
+        bytes32 salt = keccak256(abi.encodePacked(_nftName, _nftSymbol));
+        UpgradableGenericNFT token = new UpgradableGenericNFT{salt: salt}(); // Use create2
 
-        assembly {
-            collectionAddress := create2(0, add(collectionBytecode, 0x20), mload(collectionBytecode), salt)
-            if iszero(extcodesize(collectionAddress)) {
-                // revert if something gone wrong (collectionAddress doesn't contain an address)
-                revert(0, 0)
-            }
-        }
         // Initialize the collection contract with the nft settings
-        UpgradableGenericNFT(collectionAddress).initialize(_nftName, _nftSymbol);
+        token.initialize(_nftName, _nftSymbol);
 
         // Store collection author
-        ownerCollections[msg.sender][ownerBalance[msg.sender]] = collectionAddress;
-        ownerBalance[msg.sender]++;
+        ownerCollections[msg.sender][ownerBalance[msg.sender]] = address(token);
+        ownerBalance[msg.sender] += 1;
 
         // Add new collection to the marketplace
         NFTMarketplace marketplace = NFTMarketplace(marketplaceAddress);
-        marketplace.addCollection(_nftName, _nftDescription, collectionAddress, _nftAuthorName);
+        marketplace.addCollection(_nftName, _nftDescription, address(token), _nftAuthorName);
 
-        emit NFTCollectionCreated(_nftName, collectionAddress, block.timestamp);
+        emit NFTCollectionCreated(_nftName, address(token), block.timestamp);
     }
 
     /*
      * @notice Returns count of created NFT collection for a specific account
      */
-    function getOwnerBalance() external view returns (uint) {
-        return ownerBalance[msg.sender];
+    function getOwnerBalance(address ownerAddress) external view returns (uint) {
+        return ownerBalance[ownerAddress];
     }
 
     /*
      * @notice Returns collection address at index for current account
      */
-    function getOwnerCollectionByIndex(uint index) external view returns (address) {
-        return ownerCollections[msg.sender][index];
+    function getOwnerCollectionByIndex(address ownerAddress, uint index) external view returns (address) {
+        return ownerCollections[ownerAddress][index];
     }
 }

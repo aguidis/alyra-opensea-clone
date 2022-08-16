@@ -77,7 +77,7 @@ const routes = [
         path: '/collection/create',
         name: 'create_collection',
         component: CreateCollection
-    },
+    }
 ];
 
 export default function (history) {

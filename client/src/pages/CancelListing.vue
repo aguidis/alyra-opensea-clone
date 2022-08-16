@@ -3,7 +3,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia/dist/pinia.esm-browser';
 import { useMarketplaceStore } from '../stores/marketplace-store';
 import Header from '../components/Header.vue';
-import { computed, ref, watch } from 'vue';
+import { computed, watch } from 'vue';
 import { useWalletStore } from '../stores/wallet-store';
 
 const route = useRoute();

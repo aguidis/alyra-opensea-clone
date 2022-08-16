@@ -19,24 +19,15 @@
 </template>
 
 <script setup>
-import { watch } from 'vue';
-
 const props = defineProps({
     displayToast: {
         type: Boolean,
         required: true
     },
     error: {
-        type: Object,
+        type: [Object, null],
         required: true,
         default: null
     }
 });
-
-watch(
-    () => props.error,
-    (value) => {
-        console.log('coucou props', value);
-    }
-);
 </script>

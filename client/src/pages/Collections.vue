@@ -4,7 +4,7 @@ import { useCollectionFactoryStore } from '../stores/collection-factory-store';
 import Header from '../components/Header.vue';
 import { useWalletStore } from '../stores/wallet-store';
 
-const { state: wallet } = storeToRefs(useWalletStore());
+const wallet = useWalletStore();
 
 const { loading, ownedCollections } = storeToRefs(useCollectionFactoryStore());
 const { fetchAccountCollections } = useCollectionFactoryStore();

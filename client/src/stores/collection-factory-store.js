@@ -14,22 +14,15 @@ const readOnlyProvider = new StaticJsonRpcProvider(getNetworkParams().rpcUrls[0]
 const signer = readOnlyProvider.getSigner();
 
 const factoryNetwork = NFTCollectionFactory.networks[DEFAULT_NETWORK];
-
-console.log('factoryNetwork', factoryNetwork.address)
-
 const readOnlyFactoryContract = new ethers.Contract(factoryNetwork.address, NFTCollectionFactory.abi, signer);
 
 const marketplaceNetwork = NFTMarketplace.networks[DEFAULT_NETWORK];
-
-console.log('marketplaceNetwork', marketplaceNetwork.address)
-
 const readOnlyMarketplaceContract = new ethers.Contract(marketplaceNetwork.address, NFTMarketplace.abi, signer);
 
 export const useCollectionFactoryStore = defineStore({
     id: 'collection-factory',
     state: () => ({
-        factoryAddress: factoryNetwork.address,
-        collection: null,
+        newCollection: null,
         ownedCollections: [],
         transactionHash: null,
         loading: false,
@@ -45,21 +38,22 @@ export const useCollectionFactoryStore = defineStore({
 
                 const factoryContract = new ethers.Contract(factoryNetwork.address, NFTCollectionFactory.abi, signer);
 
-                console.log('factoryContract', factoryContract)
+                const tx = await factoryContract.createNFTCollection(name, symbol, description, authorName);
 
-                const receipt = await factoryContract.createNFTCollection(name, symbol, description, authorName);
+                // Wait for one block confirmation. The transaction has been mined at this point.
+                const receipt = await tx.wait();
 
-                this.transactionHash = receipt.transactionHash;
-
+                this.transactionHash = receipt.hash;
                 const latestEvent = receipt.events.at(-1);
 
                 if (receipt.events.length === 0 || latestEvent.event !== 'NFTCollectionCreated') {
                     throw 'Collection creation failed.';
                 }
 
-                console.log('NFTCollectionCreated', latestEvent)
-
+                this.newCollection = await readOnlyMarketplaceContract.getCollectionByAddress(latestEvent.args._collectionAddress);
             } catch (error) {
+                console.log('creation failed', error);
+
                 this.error = error;
             } finally {
                 this.loading = false;
@@ -74,15 +68,19 @@ export const useCollectionFactoryStore = defineStore({
             }
 
             try {
-                const collectionCount = await readOnlyFactoryContract.getOwnerBalance();
+                const { state: wallet } = useWalletStore();
+
+                const collectionCount = await readOnlyFactoryContract.getOwnerBalance(wallet.address);
+
                 const balance = parseInt(collectionCount.toString(), 10);
 
+                /*
                 if (balance === 0) {
                     return;
                 }
 
                 for (let i = 0; i < balance; i++) {
-                    const collectionAddress = await readOnlyFactoryContract.getOwnerCollectionByIndex(i);
+                    const collectionAddress = await readOnlyFactoryContract.getOwnerCollectionByIndex('0x14CE1C9Fe889c90E7716E091045D7f821306fc94', i);
 
                     // Fetch collection information
                     let marketPlaceCollection = await readOnlyMarketplaceContract.getCollectionByAddress(collectionAddress);
@@ -110,7 +108,9 @@ export const useCollectionFactoryStore = defineStore({
 
                     this.ownedCollections.push(marketPlaceCollection);
                 }
+                */
             } catch (error) {
+                console.log('ici', error);
                 this.error = error;
             } finally {
                 this.loading = false;

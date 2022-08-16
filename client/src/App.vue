@@ -30,7 +30,8 @@ watch(
 
 const displayToast = ref(false);
 
-watch(error, () => {
+watch(error, (newValue, oldValue) => {
+    console.log('watch ErrorToast', newValue, oldValue);
     displayToast.value = true;
 
     setTimeout(() => {

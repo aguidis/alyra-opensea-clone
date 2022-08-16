@@ -50,7 +50,7 @@
 <script setup>
 const props = defineProps({
     tokenIndex: {
-        type: Number,
+        type: [Number, String],
         required: true
     },
     item: {
