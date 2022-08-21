@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import { useWalletStore } from '../stores/wallet-store';
 import ConnectButton from './ConnectButton.vue';
+import { storeToRefs } from 'pinia';
 
 const props = defineProps({
     forceShadow: {
@@ -16,7 +17,8 @@ const scrollHandler = () => {
 };
 window.addEventListener('scroll', scrollHandler);
 
-const { state, connect, hasCachedProvider } = useWalletStore();
+const { isConnected } = storeToRefs(useWalletStore());
+const { connect, hasCachedProvider } = useWalletStore();
 
 if (hasCachedProvider()) {
     try {
@@ -61,7 +63,7 @@ const toggleSubmenu = () => (submenu.value = !submenu.value);
                                 Explore
                             </router-link>
                         </li>
-                        <li v-if="state.isConnected">
+                        <li v-if="isConnected">
                             <router-link
                                 :to="{ name: 'create_token' }"
                                 class="font-bold text-gray-600 hover:text-gray-900 px-5 flex items-center transition duration-150 ease-in-out"
@@ -70,7 +72,7 @@ const toggleSubmenu = () => (submenu.value = !submenu.value);
                             </router-link>
                         </li>
                         <li
-                            v-if="state.isConnected"
+                            v-if="isConnected"
                             class="relative font-bold text-gray-600 hover:text-gray-900 px-5 flex items-center transition duration-150 ease-in-out cursor-pointer"
                             @click="toggleSubmenu"
                         >

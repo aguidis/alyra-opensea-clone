@@ -1,17 +1,18 @@
 <script setup>
 import { useRoute, useRouter } from 'vue-router';
-import { storeToRefs } from 'pinia/dist/pinia.esm-browser';
+import { storeToRefs } from 'pinia';
 import { useMarketplaceStore } from '../stores/marketplace-store';
 import Header from '../components/Header.vue';
 import { computed, ref, watch } from 'vue';
 import { useWalletStore } from '../stores/wallet-store';
+import { toKebabCase } from '../helpers/string';
 
 const route = useRoute();
 const router = useRouter();
 const address = route.params.address;
 const tokenIndex = route.params.index;
 
-const { state: wallet } = storeToRefs(useWalletStore());
+const { isConnected } = storeToRefs(useWalletStore());
 
 const { collection, token } = storeToRefs(useMarketplaceStore());
 const { fetchCollection, fetchToken, listItem, test } = useMarketplaceStore();
@@ -20,11 +21,7 @@ fetchCollection(address);
 fetchToken(address, tokenIndex);
 
 const price = ref(0);
-const formValid = computed(() => wallet.value.isConnected && price.value > 0);
-
-const toKebabCase = (str) => {
-    return str.replace(/\s+/g, '-').toLowerCase();
-};
+const formValid = computed(() => isConnected.value && price.value > 0);
 
 const onSubmit = () => {
     listItem(address, tokenIndex, price.value);

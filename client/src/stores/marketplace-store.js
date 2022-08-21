@@ -8,6 +8,7 @@ import { defineStore } from 'pinia';
 
 import { DEFAULT_NETWORK } from '../constants/blockchain';
 import { getNetworkParams } from '../helpers/network-params';
+import { storeToRefs } from 'pinia';
 
 const readOnlyProvider = new StaticJsonRpcProvider(getNetworkParams().rpcUrls[0]);
 const signer = readOnlyProvider.getSigner();
@@ -196,8 +197,8 @@ export const useMarketplaceStore = defineStore({
             this.loading = true;
 
             try {
-                const { state: wallet } = useWalletStore();
-                const signer = wallet.provider.getSigner();
+                const { provider } = useWalletStore();
+                const signer = provider.getSigner();
 
                 // First approve Marketplace to apply changes on behalf of the owner
                 const nftContract = new ethers.Contract(nftAddress, GenericNFT.abi, signer);
@@ -230,8 +231,8 @@ export const useMarketplaceStore = defineStore({
             this.loading = true;
 
             try {
-                const { state: wallet } = useWalletStore();
-                const signer = wallet.provider.getSigner();
+                const { provider } = useWalletStore();
+                const signer = provider.getSigner();
 
                 // Update item price
                 const marketplaceContract = new ethers.Contract(marketplaceNetwork.address, NFTMarketplace.abi, signer);
@@ -255,8 +256,8 @@ export const useMarketplaceStore = defineStore({
             this.loading = true;
 
             try {
-                const { state: wallet } = useWalletStore();
-                const signer = wallet.provider.getSigner();
+                const { provider } = useWalletStore();
+                const signer = provider.getSigner();
 
                 // Update item price
                 const marketplaceContract = new ethers.Contract(marketplaceNetwork.address, NFTMarketplace.abi, signer);
@@ -281,8 +282,8 @@ export const useMarketplaceStore = defineStore({
             this.loading = true;
 
             try {
-                const { state: wallet } = useWalletStore();
-                const signer = wallet.provider.getSigner();
+                const { provider } = useWalletStore();
+                const signer = provider.getSigner();
 
                 // Update item price
                 const marketplaceContract = new ethers.Contract(marketplaceNetwork.address, NFTMarketplace.abi, signer);
@@ -320,7 +321,7 @@ export const useMarketplaceStore = defineStore({
             }
 
             try {
-                const { state: wallet } = useWalletStore();
+                const { address } = storeToRefs(useWalletStore());
 
                 const collectionCount = await readOnlyMarketplaceContract.getCollectionCount();
 
@@ -332,7 +333,7 @@ export const useMarketplaceStore = defineStore({
                     const collection = await readOnlyMarketplaceContract.getCollectionAtIndex(i);
 
                     const nftContract = new ethers.Contract(collection.nftAddress, GenericNFT.abi, signer);
-                    const balance = await nftContract.balanceOf(wallet.address);
+                    const balance = await nftContract.balanceOf(address.value);
 
                     const balanceInt = parseInt(balance.toString(), 10);
                     const promises = [...Array(balanceInt).keys()].map((y) => {
@@ -340,7 +341,7 @@ export const useMarketplaceStore = defineStore({
                         let currentTokenMetadata;
 
                         return nftContract
-                            .tokenOfOwnerByIndex(wallet.address, y)
+                            .tokenOfOwnerByIndex(address.value, y)
                             .then((tokenId) => {
                                 currentTokenId = tokenId;
                                 return nftContract.tokenURI(tokenId);

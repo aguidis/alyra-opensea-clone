@@ -2,7 +2,7 @@ import { useWalletStore } from './wallet-store';
 import NFTMinter from '../contracts/NFTMinter.json';
 import { ethers } from 'ethers';
 
-import { defineStore } from 'pinia';
+import { defineStore, storeToRefs } from 'pinia';
 
 import { DEFAULT_NETWORK } from '../constants/blockchain';
 
@@ -18,16 +18,19 @@ export const useMinterStore = defineStore({
         error: null
     }),
     actions: {
-        async mint(metadataUri) {
+        async mint(metadataUri, customCollectionAddress) {
             this.loading = true;
 
             try {
-                const { state: wallet } = useWalletStore();
-                const signer = wallet.provider.getSigner();
+                const { address } = storeToRefs(useWalletStore());
+                const { provider } = useWalletStore();
+                const signer = provider.getSigner();
 
-                const minterContract = new ethers.Contract(minterNetwork.address, NFTMinter.abi, signer);
+                let contractAddress = customCollectionAddress ? customCollectionAddress : minterNetwork.address;
 
-                const tx = await minterContract.safeMint(wallet.address, metadataUri);
+                const minterContract = new ethers.Contract(contractAddress, NFTMinter.abi, signer);
+
+                const tx = await minterContract.safeMint(address.value, metadataUri);
 
                 // Wait for the transaction to be confirmed, then get the token ID out of the emitted Transfer event.
                 const receipt = await tx.wait();
@@ -56,13 +59,15 @@ export const useMinterStore = defineStore({
                 console.log('token', {
                     id: tokenId,
                     ...token,
-                    tokenMetadata: metadataUrl
+                    tokenMetadata: metadataUrl,
+                    address: contractAddress
                 });
 
                 this.token = {
                     id: tokenId,
                     ...token,
-                    tokenMetadata: metadataUrl
+                    tokenMetadata: metadataUrl,
+                    address: contractAddress
                 };
             } catch (error) {
                 this.error = error;

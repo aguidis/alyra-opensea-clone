@@ -1,18 +1,16 @@
 <script setup>
 import { useRoute, useRouter } from 'vue-router';
-import { storeToRefs } from 'pinia/dist/pinia.esm-browser';
+import { storeToRefs } from 'pinia';
 import { useMarketplaceStore } from '../stores/marketplace-store';
 import { ref, watch } from 'vue';
-import { useWalletStore } from '../stores/wallet-store';
 import { shortenAddress } from '../helpers/address';
 import Header from '../components/Header.vue';
+import { toKebabCase } from '../helpers/string';
 
 const route = useRoute();
 const router = useRouter();
 const address = route.params.address;
 const tokenIndex = route.params.index;
-
-const { state: wallet } = storeToRefs(useWalletStore());
 
 const { collection, token, transactionHash } = storeToRefs(useMarketplaceStore());
 const { fetchCollection, fetchToken, buyItem } = useMarketplaceStore();
@@ -26,10 +24,6 @@ fetchToken(address, tokenIndex);
  * 3: Purchase is complete
  */
 const step = ref(1);
-
-const toKebabCase = (str) => {
-    return str.replace(/\s+/g, '-').toLowerCase();
-};
 
 const onSubmit = () => {
     step.value = 2;

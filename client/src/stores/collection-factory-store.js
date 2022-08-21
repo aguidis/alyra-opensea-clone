@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { defineStore } from 'pinia';
+import { defineStore, storeToRefs } from 'pinia';
 import { StaticJsonRpcProvider } from '@ethersproject/providers';
 
 import NFTCollectionFactory from '../contracts/NFTCollectionFactory.json';
@@ -23,7 +23,8 @@ export const useCollectionFactoryStore = defineStore({
     id: 'collection-factory',
     state: () => ({
         newCollection: null,
-        ownedCollections: [],
+        accountCollections: [],
+        accountCollectionsForMinting: [],
         transactionHash: null,
         loading: false,
         error: null
@@ -33,8 +34,8 @@ export const useCollectionFactoryStore = defineStore({
             this.loading = true;
 
             try {
-                const { state: wallet } = useWalletStore();
-                const signer = wallet.provider.getSigner();
+                const { provider } = useWalletStore();
+                const signer = provider.getSigner();
 
                 const factoryContract = new ethers.Contract(factoryNetwork.address, NFTCollectionFactory.abi, signer);
 
@@ -59,28 +60,25 @@ export const useCollectionFactoryStore = defineStore({
                 this.loading = false;
             }
         },
-        async fetchAccountCollections() {
+        async fetchAccountCollections(accountAddress) {
             this.loading = true;
 
-            if (this.ownedCollections.length > 0) {
+            if (this.accountCollections.length > 0) {
                 this.loading = false;
                 return;
             }
 
             try {
-                const { state: wallet } = useWalletStore();
-
-                const collectionCount = await readOnlyFactoryContract.getOwnerBalance(wallet.address);
+                const collectionCount = await readOnlyFactoryContract.getOwnerBalance(accountAddress);
 
                 const balance = parseInt(collectionCount.toString(), 10);
 
-                /*
                 if (balance === 0) {
                     return;
                 }
 
                 for (let i = 0; i < balance; i++) {
-                    const collectionAddress = await readOnlyFactoryContract.getOwnerCollectionByIndex('0x14CE1C9Fe889c90E7716E091045D7f821306fc94', i);
+                    const collectionAddress = await readOnlyFactoryContract.getOwnerCollectionByIndex(accountAddress, i);
 
                     // Fetch collection information
                     let marketPlaceCollection = await readOnlyMarketplaceContract.getCollectionByAddress(collectionAddress);
@@ -106,11 +104,40 @@ export const useCollectionFactoryStore = defineStore({
                             });
                     }
 
-                    this.ownedCollections.push(marketPlaceCollection);
+                    this.accountCollections.push(marketPlaceCollection);
                 }
-                */
             } catch (error) {
-                console.log('ici', error);
+                this.error = error;
+            } finally {
+                this.loading = false;
+            }
+        },
+        async fetchAccountCollectionsForMinting(accountAddress) {
+            this.loading = true;
+
+            if (this.accountCollectionsForMinting.length > 0) {
+                this.loading = false;
+                return;
+            }
+
+            try {
+                const collectionCount = await readOnlyFactoryContract.getOwnerBalance(accountAddress);
+
+                const balance = parseInt(collectionCount.toString(), 10);
+
+                if (balance === 0) {
+                    return;
+                }
+
+                for (let i = 0; i < balance; i++) {
+                    const collectionAddress = await readOnlyFactoryContract.getOwnerCollectionByIndex(accountAddress, i);
+
+                    // Fetch collection information
+                    let marketPlaceCollection = await readOnlyMarketplaceContract.getCollectionByAddress(collectionAddress);
+
+                    this.accountCollectionsForMinting.push(marketPlaceCollection);
+                }
+            } catch (error) {
                 this.error = error;
             } finally {
                 this.loading = false;

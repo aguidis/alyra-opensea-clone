@@ -25,9 +25,8 @@ const props = defineProps({
         required: true
     },
     error: {
-        type: [Object, null],
-        required: true,
-        default: null
+        type: Object,
+        required: true
     }
 });
 </script>

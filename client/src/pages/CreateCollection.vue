@@ -1,6 +1,6 @@
 <script setup>
 import { useRouter } from 'vue-router';
-import { storeToRefs } from 'pinia/dist/pinia.esm-browser';
+import { storeToRefs } from 'pinia';
 import { useCollectionFactoryStore } from '../stores/collection-factory-store';
 import { ref, watch, computed } from 'vue';
 import { useWalletStore } from '../stores/wallet-store';
@@ -8,7 +8,7 @@ import Header from '../components/Header.vue';
 
 const router = useRouter();
 
-const { state: wallet } = storeToRefs(useWalletStore());
+const { isConnected } = storeToRefs(useWalletStore());
 
 const { newCollection } = storeToRefs(useCollectionFactoryStore());
 const { create } = useCollectionFactoryStore();
@@ -24,7 +24,7 @@ const symbol = ref();
 const description = ref();
 const authorName = ref();
 
-const formValid = computed(() => wallet.value.isConnected && name.value && symbol.value && description.value && authorName.value);
+const formValid = computed(() => isConnected.value && name.value && symbol.value && description.value && authorName.value);
 
 const onSubmit = () => {
     create(name.value, symbol.value, description.value, authorName.value);

@@ -2,7 +2,7 @@
 import { watch } from 'vue';
 import { useRoute } from 'vue-router';
 import Header from '../components/Header.vue';
-import { storeToRefs } from 'pinia/dist/pinia.esm-browser';
+import { storeToRefs } from 'pinia';
 import { useMarketplaceStore } from '../stores/marketplace-store';
 import CollectionItem from '../components/CollectionItem.vue';
 
@@ -40,7 +40,10 @@ watch(collection, (value) => {
                         </article>
                     </section>
 
-                    <section class="max-w-sm mx-auto grid gap-6 md:grid-cols-4 lg:grid-cols-4 items-start md:max-w-2xl lg:max-w-none">
+                    <section
+                        v-if="collectionItems.length > 0"
+                        class="max-w-sm mx-auto grid gap-6 md:grid-cols-4 lg:grid-cols-4 items-start md:max-w-2xl lg:max-w-none"
+                    >
                         <CollectionItem
                             v-for="(item, index) in collectionItems"
                             :key="index"
@@ -48,6 +51,9 @@ watch(collection, (value) => {
                             :item="item"
                             :address="collection.nftAddress"
                         />
+                    </section>
+                    <section v-else class="max-w-sm">
+                        <p class="mb-5">Mint coming soon ;)</p>
                     </section>
                 </div>
             </section>

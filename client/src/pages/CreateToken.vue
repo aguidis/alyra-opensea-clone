@@ -1,6 +1,6 @@
 <script setup>
 import { useRouter } from 'vue-router';
-import { storeToRefs } from 'pinia/dist/pinia.esm-browser';
+import { storeToRefs } from 'pinia';
 import { useMinterStore } from '../stores/minter-store';
 import { ref, watch, computed } from 'vue';
 import { useWalletStore } from '../stores/wallet-store';
@@ -8,13 +8,23 @@ import Header from '../components/Header.vue';
 import UploadInput from '../components/UploadInput.vue';
 import { File, NFTStorage } from 'nft.storage';
 import CardModal from '../components/CardModal.vue';
+import { useCollectionFactoryStore } from '../stores/collection-factory-store';
 
 const router = useRouter();
 
-const { state: wallet } = storeToRefs(useWalletStore());
+const { isConnected } = storeToRefs(useWalletStore());
 
-const { minterAddress, token } = storeToRefs(useMinterStore());
+const { token } = storeToRefs(useMinterStore());
 const { mint } = useMinterStore();
+
+const { address: accountAddress } = storeToRefs(useWalletStore());
+
+const { loading, accountCollectionsForMinting } = storeToRefs(useCollectionFactoryStore());
+const { fetchAccountCollectionsForMinting } = useCollectionFactoryStore();
+
+watch(accountAddress, (value) => {
+    fetchAccountCollectionsForMinting(value);
+});
 
 /*
  * 1: Mint token
@@ -44,11 +54,26 @@ const saveTokenProperties = () => {
     formSubmitted.value = tokenProperties.value.length > 0;
 };
 
-const name = ref();
-const description = ref();
-const selectedImage = ref();
+let collectionOptions = ref(new Map());
 
-const formValid = computed(() => wallet.value.isConnected);
+watch(
+    accountCollectionsForMinting,
+    (list) => {
+        for (const collection of list) {
+            collectionOptions.value.set(collection.nftAddress, collection.name);
+        }
+    },
+    {
+        deep: true
+    }
+);
+
+const name = ref(null);
+const description = ref(null);
+const selectedImage = ref(null);
+const selectedCollectionAddress = ref(null);
+
+const formValid = computed(() => isConnected.value && name.value && description.value && selectedImage.value);
 
 const onFileSelected = (file) => {
     selectedImage.value = file;
@@ -72,7 +97,7 @@ const onSubmit = async () => {
     // Dev use: ipfs://bafyreid3qxqimzmsssewid7kfv5fcxexopircnrvcdhq4cg3kzrtwblys4/metadata.json
     const metadataUrl = 'ipfs://bafyreid3qxqimzmsssewid7kfv5fcxexopircnrvcdhq4cg3kzrtwblys4/metadata.json';
 
-    mint(metadataUrl);
+    mint(metadataUrl, selectedCollectionAddress.value);
 };
 
 watch(
@@ -159,6 +184,28 @@ watch(
                         </div>
                     </div>
 
+                    <div class="mb-6">
+                        <label for="description" class="block font-bold text-gray-900">Collection</label>
+                        <small class="text-gray-700 font-medium">This is the collection where your item will appear.</small>
+                        <div class="w-full mt-5 rounded-xl bg-white px-4 ring-2 ring-gray-200 focus-within:ring-gray-400">
+                            <select
+                                id="description"
+                                v-model="selectedCollectionAddress"
+                                class="my-2 w-full border-none bg-transparent outline-none focus:outline-none focus:ring-transparent"
+                            >
+                                <option :value="null" selected>Select collection</option>
+                                <option
+                                    v-for="[address, label] of collectionOptions"
+                                    :key="address"
+                                    :value="address"
+                                    :selected="address === selectedCollectionAddress"
+                                >
+                                    {{ label }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
                     <button
                         type="submit"
                         :disabled="!formValid"
@@ -218,7 +265,7 @@ watch(
 
                 <p class="mt-10 mb-5">
                     Your are now the proud owner of
-                    <router-link class="font-medium text-opensea-400" :to="{ name: 'token', params: { address: minterAddress, index: token.id } }">{{
+                    <router-link class="font-medium text-opensea-400" :to="{ name: 'token', params: { address: token.address, index: token.id } }">{{
                         token.name
                     }}</router-link
                     >.

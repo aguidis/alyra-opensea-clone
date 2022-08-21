@@ -2,10 +2,7 @@
 import { storeToRefs } from 'pinia';
 import { useMarketplaceStore } from '../stores/marketplace-store';
 import Header from '../components/Header.vue';
-import { useWalletStore } from '../stores/wallet-store';
 import CollectionItem from '../components/CollectionItem.vue';
-
-const { state: wallet } = storeToRefs(useWalletStore());
 
 const { loading, accountTokens } = storeToRefs(useMarketplaceStore());
 const { fetchAccountTokens } = useMarketplaceStore();

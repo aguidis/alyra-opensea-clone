@@ -1,17 +1,18 @@
 <script setup>
 import { useRoute, useRouter } from 'vue-router';
-import { storeToRefs } from 'pinia/dist/pinia.esm-browser';
+import { storeToRefs } from 'pinia';
 import { useMarketplaceStore } from '../stores/marketplace-store';
 import Header from '../components/Header.vue';
 import { computed, watch } from 'vue';
 import { useWalletStore } from '../stores/wallet-store';
+import { toKebabCase } from '../helpers/string';
 
 const route = useRoute();
 const router = useRouter();
 const address = route.params.address;
 const tokenIndex = route.params.index;
 
-const { state: wallet } = storeToRefs(useWalletStore());
+const { address: accountAddress, isConnected } = storeToRefs(useWalletStore());
 
 const { collection, token } = storeToRefs(useMarketplaceStore());
 const { fetchCollection, fetchToken, cancelListing, test } = useMarketplaceStore();
@@ -20,13 +21,9 @@ fetchCollection(address);
 fetchToken(address, tokenIndex);
 
 const isForSale = computed(() => token?.value?.listing.price > 0);
-const isOwner = computed(() => wallet.value.address === token?.value?.owner);
+const isOwner = computed(() => accountAddress.value === token?.value?.owner);
 
-const canCancelListing = computed(() => wallet.value.isConnected && isForSale.value && isOwner.value);
-
-const toKebabCase = (str) => {
-    return str.replace(/\s+/g, '-').toLowerCase();
-};
+const canCancelListing = computed(() => isConnected.value && isForSale.value && isOwner.value);
 
 const onSubmit = () => {
     cancelListing(address, tokenIndex);

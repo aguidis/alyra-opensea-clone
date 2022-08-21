@@ -41,7 +41,7 @@ watch(error, (newValue, oldValue) => {
 </script>
 
 <template>
-    <ErrorToast :display-toast="displayToast" :error="error" />
+    <ErrorToast v-if="error" :display-toast="displayToast" :error="error" />
 
     <Loader v-if="loading" />
     <router-view></router-view>

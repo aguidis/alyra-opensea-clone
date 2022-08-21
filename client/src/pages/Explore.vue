@@ -2,15 +2,12 @@
 import { storeToRefs } from 'pinia';
 import { useMarketplaceStore } from '../stores/marketplace-store';
 import Header from '../components/Header.vue';
+import CollectionPreview from '../components/CollectionPreview.vue';
 
-const { collections } = storeToRefs(useMarketplaceStore());
+const { loading, collections } = storeToRefs(useMarketplaceStore());
 const { fetchCollections } = useMarketplaceStore();
 
 fetchCollections();
-
-const toKebabCase = (str) => {
-    return str.replace(/\s+/g, '-').toLowerCase();
-};
 </script>
 
 <template>
@@ -24,24 +21,24 @@ const toKebabCase = (str) => {
                         <h1 class="h2">Explore Collections</h1>
                     </div>
 
-                    <section class="max-w-sm mx-auto grid gap-6 md:grid-cols-3 lg:grid-cols-3 items-start md:max-w-2xl lg:max-w-none">
-                        <article
-                            v-for="item in collections"
-                            :key="item.index.toString()"
-                            class="bg-white border border-gray-100 rounded-lg text-center shadow-lg hover:shadow-xl align-center h-full"
-                        >
-                            <router-link :to="{ name: 'collection', params: { id: item.index, slug: toKebabCase(item.name) } }">
-                                <img class="rounded-t-lg w-full" :src="item.coverImage.replace('ipfs://', 'https://nftstorage.link/ipfs/')" :alt="item.name" />
-                            </router-link>
-
-                            <p class="font-bold pt-3">{{ item.name }}</p>
-
-                            <p class="font-semibold p-2 text-sm text-gray-500">by {{ item.authorName }}</p>
-
-                            <p class="px-10 py-2 mb-5 text-gray-600">
-                                {{ item.description }}
-                            </p>
+                    <section v-if="loading" class="max-w-sm mx-auto grid gap-6 md:grid-cols-4 lg:grid-cols-4 items-start md:max-w-2xl lg:max-w-none">
+                        <article v-for="n in 4" :key="n" class="bg-white rounded-lg shadow-lg hover:shadow-xl group relative overflow-hidden">
+                            <div class="h-64 bg-gray-400 w-full object-cover object-center"></div>
+                            <div class="p-6">
+                                <h2 class="bg-gray-400 animate-pulse h-4 w-1/4 mb-2"></h2>
+                                <h1 class="w-1/3 mb-4 h-6 animate-pulse bg-gray-500"></h1>
+                            </div>
                         </article>
+                    </section>
+
+                    <section
+                        v-if="collections.length > 0"
+                        class="max-w-sm mx-auto grid gap-6 md:grid-cols-4 lg:grid-cols-4 items-start md:max-w-2xl lg:max-w-none"
+                    >
+                        <CollectionPreview v-for="item in collections" :key="item.index.toString()" :item="item" />
+                    </section>
+                    <section v-else class="max-w-sm">
+                        <p class="mb-5">You don’t have any collection yet.</p>
                     </section>
                 </div>
             </section>

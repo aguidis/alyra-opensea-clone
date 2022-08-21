@@ -1,17 +1,18 @@
 <script setup>
 import { useRoute } from 'vue-router';
-import { storeToRefs } from 'pinia/dist/pinia.esm-browser';
+import { storeToRefs } from 'pinia';
 import { useMarketplaceStore } from '../stores/marketplace-store';
 import Header from '../components/Header.vue';
 import { shortenAddress } from '../helpers/address';
 import { computed } from 'vue';
 import { useWalletStore } from '../stores/wallet-store';
+import { toKebabCase } from '../helpers/string';
 
 const route = useRoute();
 const address = route.params.address;
 const tokenIndex = route.params.index;
 
-const { state: wallet } = storeToRefs(useWalletStore());
+const { isConnected, address: walletAddress } = storeToRefs(useWalletStore());
 
 const { collection, token } = storeToRefs(useMarketplaceStore());
 const { fetchCollection, fetchToken } = useMarketplaceStore();
@@ -20,15 +21,11 @@ fetchCollection(address);
 fetchToken(address, tokenIndex);
 
 const isForSale = computed(() => token.value?.listing.price > 0);
-const isOwner = computed(() => wallet.value.address === token.value?.owner);
+const isOwner = computed(() => walletAddress.value === token.value?.owner);
 
-const canBuy = computed(() => wallet.value.isConnected && isForSale.value && !isOwner.value);
-const createListing = computed(() => wallet.value.isConnected && !isForSale.value && isOwner.value);
-const canUpdateListing = computed(() => wallet.value.isConnected && isForSale.value && isOwner.value);
-
-const toKebabCase = (str) => {
-    return str.replace(/\s+/g, '-').toLowerCase();
-};
+const canBuy = computed(() => isConnected.value && isForSale.value && !isOwner.value);
+const createListing = computed(() => isConnected.value && !isForSale.value && isOwner.value);
+const canUpdateListing = computed(() => isConnected.value && isForSale.value && isOwner.value);
 </script>
 
 <template>

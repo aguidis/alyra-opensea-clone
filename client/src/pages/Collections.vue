@@ -3,13 +3,17 @@ import { storeToRefs } from 'pinia';
 import { useCollectionFactoryStore } from '../stores/collection-factory-store';
 import Header from '../components/Header.vue';
 import { useWalletStore } from '../stores/wallet-store';
+import { watch } from 'vue';
+import CollectionPreview from '../components/CollectionPreview.vue';
 
-const wallet = useWalletStore();
+const { address } = storeToRefs(useWalletStore());
 
-const { loading, ownedCollections } = storeToRefs(useCollectionFactoryStore());
+const { loading, accountCollections } = storeToRefs(useCollectionFactoryStore());
 const { fetchAccountCollections } = useCollectionFactoryStore();
 
-fetchAccountCollections();
+watch(address, (value) => {
+    fetchAccountCollections(value);
+});
 </script>
 
 <template>
@@ -22,7 +26,11 @@ fetchAccountCollections();
                     <div class="max-w-3xl mx-auto text-center py-12 md:py-20">
                         <h1 class="h2 mb-3">My collections</h1>
 
-                        <h2 class="h4 font-medium">Create, curate, and manage collections of unique NFTs to share and sell.</h2>
+                        <h2 class="h4 font-medium mb-5">Create, curate, and manage collections of unique NFTs to share and sell.</h2>
+
+                        <router-link :to="{ name: 'create_collection' }" class="btn text-white bg-blue-600 hover:bg-blue-700 w-full mb-4 sm:w-auto sm:mb-0">
+                            Create collection
+                        </router-link>
                     </div>
 
                     <section v-if="loading" class="max-w-sm mx-auto grid gap-6 md:grid-cols-4 lg:grid-cols-4 items-start md:max-w-2xl lg:max-w-none">
@@ -36,33 +44,13 @@ fetchAccountCollections();
                     </section>
 
                     <section
-                        v-if="ownedCollections.length > 0"
+                        v-if="accountCollections.length > 0"
                         class="max-w-sm mx-auto grid gap-6 md:grid-cols-4 lg:grid-cols-4 items-start md:max-w-2xl lg:max-w-none"
                     >
-                        <article
-                            v-for="item in ownedCollections"
-                            :key="item.index.toString()"
-                            class="bg-white border border-gray-100 rounded-lg text-center shadow-lg hover:shadow-xl align-center h-full"
-                        >
-                            <router-link :to="{ name: 'collection', params: { id: item.index, slug: toKebabCase(item.name) } }">
-                                <img class="rounded-t-lg w-full" :src="item.coverImage.replace('ipfs://', 'https://nftstorage.link/ipfs/')" :alt="item.name" />
-                            </router-link>
-
-                            <p class="font-bold pt-3">{{ item.name }}</p>
-
-                            <p class="font-semibold p-2 text-sm text-gray-500">by {{ item.authorName }}</p>
-
-                            <p class="px-10 py-2 mb-5 text-gray-600">
-                                {{ item.description }}
-                            </p>
-                        </article>
+                        <CollectionPreview v-for="item in accountCollections" :key="item.index.toString()" :item="item" />
                     </section>
                     <section v-else class="max-w-sm">
                         <p class="mb-5">You don’t have any collection yet.</p>
-
-                        <router-link :to="{ name: 'create_collection' }" class="btn text-white bg-blue-600 hover:bg-blue-700 w-full mb-4 sm:w-auto sm:mb-0">
-                            Create collection
-                        </router-link>
                     </section>
                 </div>
             </section>
