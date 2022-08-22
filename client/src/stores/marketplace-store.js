@@ -312,13 +312,8 @@ export const useMarketplaceStore = defineStore({
                 this.loading = false;
             }
         },
-        async fetchAccountTokens() {
+        async fetchCollectedTokens() {
             this.loading = true;
-
-            if (this.accountTokens.length > 0) {
-                this.loading = false;
-                return;
-            }
 
             try {
                 const { address } = storeToRefs(useWalletStore());
@@ -331,6 +326,10 @@ export const useMarketplaceStore = defineStore({
 
                 for (let i = 0; i < collectionCountInt; i++) {
                     const collection = await readOnlyMarketplaceContract.getCollectionAtIndex(i);
+
+                    if (!collection.verified) {
+                        continue;
+                    }
 
                     const nftContract = new ethers.Contract(collection.nftAddress, GenericNFT.abi, signer);
                     const balance = await nftContract.balanceOf(address.value);

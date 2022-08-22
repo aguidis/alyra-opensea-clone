@@ -6,7 +6,7 @@ module.exports = async function (callback) {
 
         const factory = await NFTCollectionFactory.deployed();
 
-        await factory.createNFTCollection('Digimon', 'DIG', 'Coucou description', 'Adrien', {from: accounts[1]})
+        await factory.createNFTCollection('Digimon', 'DIG', 'Coucou description', 'Akiyoshi Hongo', {from: accounts[1]})
     } catch (error) {
         console.log("error", error);
     }

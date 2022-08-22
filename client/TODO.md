@@ -1,3 +1,4 @@
--   Tester tout le flow de creation et checker que tous les liens marchent
--   Créer une collection avec la NFT Factory
--   Pouvoir minter des tokens à la volée dans les collections créés
+- Distingué la page qui liste les tokens collectés (checker seulement les collections verified) et les tokens créés (checker minter + les collections créées)
+- Retester création token avec et sans collection sélectionnée  
+- Finir infinite scroll pour la collection Pokemon
+- Voir pourquoi la liste des collections créées n'est pas load au premier refresh

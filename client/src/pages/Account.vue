@@ -5,9 +5,9 @@ import Header from '../components/Header.vue';
 import CollectionItem from '../components/CollectionItem.vue';
 
 const { loading, accountTokens } = storeToRefs(useMarketplaceStore());
-const { fetchAccountTokens } = useMarketplaceStore();
+const { fetchCollectedTokens } = useMarketplaceStore();
 
-fetchAccountTokens();
+fetchCollectedTokens();
 </script>
 
 <template>

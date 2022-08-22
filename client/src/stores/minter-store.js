@@ -1,18 +1,28 @@
-import { useWalletStore } from './wallet-store';
-import NFTMinter from '../contracts/NFTMinter.json';
-import { ethers } from 'ethers';
-
 import { defineStore, storeToRefs } from 'pinia';
-
+import { ethers } from 'ethers';
+import { StaticJsonRpcProvider } from '@ethersproject/providers';
 import { DEFAULT_NETWORK } from '../constants/blockchain';
+import { getNetworkParams } from '../helpers/network-params';
+import { useWalletStore } from './wallet-store';
+import NFTMarketplace from '../contracts/NFTMarketplace.json';
+import NFTMinter from '../contracts/NFTMinter.json';
+import UpgradableGenericNFT from '../contracts/UpgradableGenericNFT.json';
+import GenericNFT from '../contracts/GenericNFT.json';
+
+const readOnlyProvider = new StaticJsonRpcProvider(getNetworkParams().rpcUrls[0]);
+const signer = readOnlyProvider.getSigner();
 
 const minterNetwork = NFTMinter.networks[DEFAULT_NETWORK];
+const readOnlyNFTMinterContract = new ethers.Contract(minterNetwork.address, NFTMinter.abi, signer);
+
+const marketplaceNetwork = NFTMarketplace.networks[DEFAULT_NETWORK];
+const readOnlyMarketplaceContract = new ethers.Contract(marketplaceNetwork.address, NFTMarketplace.abi, signer);
 
 export const useMinterStore = defineStore({
     id: 'minter',
     state: () => ({
-        minterAddress: minterNetwork.address,
         token: null,
+        createdTokens: [],
         transactionHash: null,
         loading: false,
         error: null
@@ -26,9 +36,13 @@ export const useMinterStore = defineStore({
                 const { provider } = useWalletStore();
                 const signer = provider.getSigner();
 
-                let contractAddress = customCollectionAddress ? customCollectionAddress : minterNetwork.address;
+                const contractAddress = customCollectionAddress ? customCollectionAddress : minterNetwork.address;
+                let contractAbi = customCollectionAddress ? UpgradableGenericNFT.abi : NFTMinter.abi;
 
-                const minterContract = new ethers.Contract(contractAddress, NFTMinter.abi, signer);
+                console.log('account', address.value);
+                console.log('contract', contractAddress);
+
+                const minterContract = new ethers.Contract(contractAddress, contractAbi, signer);
 
                 const tx = await minterContract.safeMint(address.value, metadataUri);
 
@@ -69,6 +83,65 @@ export const useMinterStore = defineStore({
                     tokenMetadata: metadataUrl,
                     address: contractAddress
                 };
+            } catch (error) {
+                this.error = error;
+            } finally {
+                this.loading = false;
+            }
+        },
+        async fetchCreatedTokens() {
+            this.loading = true;
+
+            try {
+                const { address } = storeToRefs(useWalletStore());
+
+                let tokenPromises = [];
+
+                const balance = await readOnlyNFTMinterContract.balanceOf(address.value);
+
+                const balanceInt = parseInt(balance.toString(), 10);
+                const minterOwnedTokensPromises = [...Array(balanceInt).keys()].map((y) => {
+                    let currentTokenId;
+                    let currentTokenMetadata;
+
+                    return readOnlyNFTMinterContract
+                        .tokenOfOwnerByIndex(address.value, y)
+                        .then((tokenId) => {
+                            currentTokenId = tokenId;
+                            return readOnlyNFTMinterContract.tokenURI(tokenId);
+                        })
+                        .then((tokenURI) => {
+                            const ipfsGateway = tokenURI.replace('ipfs://', 'https://nftstorage.link/ipfs/');
+                            return fetch(ipfsGateway).then((metadata) => metadata.json());
+                        })
+                        .then((metadata) => {
+                            currentTokenMetadata = metadata;
+
+                            return readOnlyMarketplaceContract.getListing(minterNetwork.address, currentTokenId);
+                        })
+                        .then((listing) => {
+                            return {
+                                id: currentTokenId.toString(),
+                                ...currentTokenMetadata,
+                                nftAddress: minterNetwork.address,
+                                listing: {
+                                    price: parseInt(listing.price.toString(), 10),
+                                    seller: listing.seller
+                                }
+                            };
+                        });
+                });
+
+                // TODO
+                // Créer une methode similaire dans le factory store
+
+
+                tokenPromises = [...tokenPromises, ...minterOwnedTokensPromises];
+
+                Promise.all(tokenPromises).then((values) => {
+                    this.createdTokens = values;
+                    this.loading = false;
+                });
             } catch (error) {
                 this.error = error;
             } finally {

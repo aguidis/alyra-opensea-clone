@@ -32,8 +32,9 @@ contract NFTCollectionFactory {
         bytes32 salt = keccak256(abi.encodePacked(_nftName, _nftSymbol));
         UpgradableGenericNFT token = new UpgradableGenericNFT{salt: salt}(); // Use create2
 
-        // Initialize the collection contract with the nft settings
+        // Initialize the collection contract with the nft settings and transfer ownership to the creator account
         token.initialize(_nftName, _nftSymbol);
+        token.transferOwnership(msg.sender);
 
         // Store collection author
         ownerCollections[msg.sender][ownerBalance[msg.sender]] = address(token);
