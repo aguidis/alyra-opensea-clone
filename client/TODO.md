@@ -1,4 +1,2 @@
-- Distingué la page qui liste les tokens collectés (checker seulement les collections verified) et les tokens créés (checker minter + les collections créées)
-- Retester création token avec et sans collection sélectionnée  
-- Finir infinite scroll pour la collection Pokemon
-- Voir pourquoi la liste des collections créées n'est pas load au premier refresh
+-   Finir infinite scroll pour la collection Pokemon
+-   Voir pourquoi la liste des collections créées n'est pas load au premier refresh

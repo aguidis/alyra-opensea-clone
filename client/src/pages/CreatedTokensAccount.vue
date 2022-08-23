@@ -1,18 +1,18 @@
 <script setup>
 import { storeToRefs } from 'pinia';
-import { useMarketplaceStore } from '../stores/marketplace-store';
 import Header from '../components/Header.vue';
 import CollectionItem from '../components/CollectionItem.vue';
-import { useWalletStore } from '../stores/wallet-store';
+import { useMinterStore } from '../stores/minter-store';
 import { watch } from 'vue';
+import { useWalletStore } from '../stores/wallet-store';
 
-const { loading, accountTokens } = storeToRefs(useMarketplaceStore());
-const { fetchCollectedTokens } = useMarketplaceStore();
+const { loading, createdTokens } = storeToRefs(useMinterStore());
+const { fetchCreatedTokens } = useMinterStore();
 
 const { address } = storeToRefs(useWalletStore());
 
 watch(address, (value) => {
-    fetchCollectedTokens(value);
+    fetchCreatedTokens(value);
 });
 </script>
 
@@ -24,24 +24,26 @@ watch(address, (value) => {
             <section class="max-w-6xl mx-auto px-4 sm:px-6">
                 <div class="py-12 md:py-20">
                     <div class="max-w-3xl mx-auto text-center py-12 md:py-20">
-                        <h1 class="h2">Your collected NFTs</h1>
+                        <h1 class="h2">Your created NFTs</h1>
                     </div>
 
                     <ul class="flex mb-5">
                         <li class="mr-5">
-                            <router-link :to="{ name: 'account' }" class="inline-block rounded bg-opensea-400 text-white py-3 px-5"> Collected </router-link>
+                            <router-link :to="{ name: 'account' }" class="inline-block border-b-2 border-b-opensea-400 text-opensea-400 py-3 px-5">
+                                Collected
+                            </router-link>
                         </li>
                         <li>
-                            <router-link
-                                :to="{ name: 'account_created_tokens' }"
-                                class="inline-block border-b-2 border-b-opensea-400 text-opensea-400 py-3 px-5"
-                            >
+                            <router-link :to="{ name: 'account_created_tokens' }" class="inline-block rounded bg-opensea-400 text-white py-3 px-5">
                                 Created
                             </router-link>
                         </li>
                     </ul>
 
-                    <section v-if="loading" class="max-w-sm mx-auto grid gap-6 md:grid-cols-4 lg:grid-cols-4 items-start md:max-w-2xl lg:max-w-none">
+                    <section
+                        v-if="loading || address === null"
+                        class="max-w-sm mx-auto grid gap-6 md:grid-cols-4 lg:grid-cols-4 items-start md:max-w-2xl lg:max-w-none"
+                    >
                         <article v-for="n in 4" :key="n" class="bg-white rounded-lg shadow-lg hover:shadow-xl group relative overflow-hidden">
                             <div class="h-64 bg-gray-400 w-full object-cover object-center"></div>
                             <div class="p-6">
@@ -52,13 +54,13 @@ watch(address, (value) => {
                     </section>
 
                     <section
-                        v-if="accountTokens.length > 0"
+                        v-if="createdTokens.length > 0"
                         class="max-w-sm mx-auto grid gap-6 md:grid-cols-4 lg:grid-cols-4 items-start md:max-w-2xl lg:max-w-none"
                     >
-                        <CollectionItem v-for="(item, index) in accountTokens" :key="index" :token-index="item.id" :item="item" :address="item.nftAddress" />
+                        <CollectionItem v-for="(item, index) in createdTokens" :key="index" :token-index="item.id" :item="item" :address="item.nftAddress" />
                     </section>
                     <section v-else class="max-w-sm">
-                        <p class="mb-5">You don’t have any collected tokens yet.</p>
+                        <p class="mb-5">You don’t have any created tokens yet.</p>
                     </section>
                 </div>
             </section>

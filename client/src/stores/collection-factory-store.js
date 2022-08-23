@@ -63,11 +63,6 @@ export const useCollectionFactoryStore = defineStore({
         async fetchAccountCollections(accountAddress) {
             this.loading = true;
 
-            if (this.accountCollections.length > 0) {
-                this.loading = false;
-                return;
-            }
-
             try {
                 const collectionCount = await readOnlyFactoryContract.getOwnerBalance(accountAddress);
 
@@ -114,11 +109,6 @@ export const useCollectionFactoryStore = defineStore({
         },
         async fetchAccountCollectionsForMinting(accountAddress) {
             this.loading = true;
-
-            if (this.accountCollectionsForMinting.length > 0) {
-                this.loading = false;
-                return;
-            }
 
             try {
                 const collectionCount = await readOnlyFactoryContract.getOwnerBalance(accountAddress);

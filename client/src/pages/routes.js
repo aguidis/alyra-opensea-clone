@@ -11,6 +11,7 @@ import CreateToken from './CreateToken.vue';
 import Account from './Account.vue';
 import Collections from './Collections.vue';
 import CreateCollection from './CreateCollection.vue';
+import CreatedTokensAccount from './CreatedTokensAccount.vue';
 
 const routes = [
     {
@@ -67,6 +68,11 @@ const routes = [
         path: '/account',
         name: 'account',
         component: Account
+    },
+    {
+        path: '/account/created-tokens',
+        name: 'account_created_tokens',
+        component: CreatedTokensAccount
     },
     {
         path: '/collections',
