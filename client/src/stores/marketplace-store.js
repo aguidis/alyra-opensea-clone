@@ -112,8 +112,6 @@ export const useMarketplaceStore = defineStore({
 
                 const range = Array.from({ length: stop - start + 1 }, (_, i) => start + i);
 
-                console.log('range', range);
-
                 const tokenPromises = range.map((i) => {
                     let currentTokenId;
                     let currentTokenMetadata;

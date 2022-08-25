@@ -37,9 +37,6 @@ fetchCollections();
                     >
                         <CollectionPreview v-for="item in collections" :key="item.index.toString()" :item="item" />
                     </section>
-                    <section v-else class="max-w-sm">
-                        <p class="mb-5">You don’t have any collection yet.</p>
-                    </section>
                 </div>
             </section>
         </main>

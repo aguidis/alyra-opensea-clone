@@ -34,8 +34,6 @@ watch(
     newCollection,
     (currValue, prevValue) => {
         step.value = 2;
-
-        console.log('step', step.value);
     },
     {
         deep: true
