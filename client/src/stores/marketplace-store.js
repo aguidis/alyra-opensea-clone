@@ -23,6 +23,7 @@ export const useMarketplaceStore = defineStore({
         collections: [],
         accountTokens: [],
         collection: null,
+        collectionTotalSupply: 0,
         collectionItems: [],
         token: null,
         transactionHash: null,
@@ -77,6 +78,7 @@ export const useMarketplaceStore = defineStore({
         async fetchCollection(identifier) {
             this.loading = true;
             this.collection = null;
+            this.collectionItems = [];
 
             try {
                 if (ethers.utils.isAddress(identifier)) {
@@ -90,10 +92,8 @@ export const useMarketplaceStore = defineStore({
                 this.loading = false;
             }
         },
-        async fetchCollectionItems(address) {
-            console.log('fetchCollectionItems');
+        async fetchCollectionItems(address, page) {
             this.loading = true;
-            this.collectionItems = [];
 
             try {
                 const nftContract = new ethers.Contract(address, GenericNFT.abi, signer);
@@ -101,9 +101,20 @@ export const useMarketplaceStore = defineStore({
                 // TODO handle infinite scroll pagination
                 let totalSupply = await nftContract.totalSupply();
                 totalSupply = parseInt(totalSupply.toString(), 10);
-                const max = totalSupply > 10 ? 9 : totalSupply;
 
-                const tokenPromises = [...Array(max).keys()].map((i) => {
+                const itemsPerPage = 12;
+
+                this.collectionTotalSupply = totalSupply;
+
+                const start = page * itemsPerPage - itemsPerPage;
+                const end = start + (itemsPerPage - 1);
+                const stop = end > totalSupply ? totalSupply - 1 : end;
+
+                const range = Array.from({ length: stop - start + 1 }, (_, i) => start + i);
+
+                console.log('range', range);
+
+                const tokenPromises = range.map((i) => {
                     let currentTokenId;
                     let currentTokenMetadata;
 
@@ -133,7 +144,7 @@ export const useMarketplaceStore = defineStore({
                 });
 
                 Promise.all(tokenPromises).then((values) => {
-                    this.collectionItems = values;
+                    this.collectionItems = [...this.collectionItems, ...values];
                     this.loading = false;
                 });
             } catch (error) {

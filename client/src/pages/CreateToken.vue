@@ -80,7 +80,6 @@ const onFileSelected = (file) => {
 };
 
 const onSubmit = async () => {
-    /*
     // Store metadata on IPFS
     const apiKey = import.meta.env.VITE_NFT_STORAGE_API_KEY;
     const client = new NFTStorage({ token: apiKey });
@@ -91,21 +90,13 @@ const onSubmit = async () => {
         image: selectedImage.value
     });
 
-    mint(metadata.url)
-    */
-
-    // Dev use: ipfs://bafyreid3qxqimzmsssewid7kfv5fcxexopircnrvcdhq4cg3kzrtwblys4/metadata.json
-    const metadataUrl = 'ipfs://bafyreid3qxqimzmsssewid7kfv5fcxexopircnrvcdhq4cg3kzrtwblys4/metadata.json';
-
-    mint(metadataUrl, selectedCollectionAddress.value);
+    mint(metadata.url, selectedCollectionAddress.value);
 };
 
 watch(
     token,
-    (currValue, prevValue) => {
+    () => {
         step.value = 2;
-
-        console.log('step', step.value);
     },
     {
         deep: true

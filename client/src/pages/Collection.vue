@@ -9,13 +9,52 @@ import CollectionItem from '../components/CollectionItem.vue';
 const route = useRoute();
 const id = route.params.id;
 
-const { collection, collectionItems, loading } = storeToRefs(useMarketplaceStore());
+const { collection, collectionItems, collectionTotalSupply, loading } = storeToRefs(useMarketplaceStore());
 const { fetchCollection, fetchCollectionItems } = useMarketplaceStore();
 
 fetchCollection(id);
 
-watch(collection, (value) => {
-    fetchCollectionItems(value.nftAddress);
+let page = 1;
+
+function throttle(func, wait) {
+    let waiting = false;
+    return function () {
+        if (waiting) {
+            return;
+        }
+
+        waiting = true;
+        setTimeout(() => {
+            func.apply(this, arguments);
+            waiting = false;
+        }, wait);
+    };
+}
+
+watch(collection, (loadedCollection) => {
+    fetchCollectionItems(loadedCollection.nftAddress, page);
+
+    watch(collectionTotalSupply, (supply) => {
+        const itemsPerPage = 12;
+        const totalPages = Math.ceil(supply / itemsPerPage);
+
+        // Handle infinite scroll for big collections
+        window.addEventListener(
+            'scroll',
+            throttle(() => {
+                if (window.innerHeight + window.scrollY >= document.body.scrollHeight) {
+                    // you're at the bottom of the page
+                    console.log('Bottom of page');
+
+                    if (!loading.value && page <= totalPages) {
+                        page++;
+                        fetchCollectionItems(loadedCollection.nftAddress, page);
+                        window.scroll(0, document.body.scrollHeight - window.innerHeight);
+                    }
+                }
+            }, 2000)
+        );
+    });
 });
 </script>
 
@@ -41,7 +80,7 @@ watch(collection, (value) => {
                     </section>
 
                     <section
-                        v-if="collectionItems.length > 0"
+                        v-if="!loading && collectionItems.length > 0"
                         class="max-w-sm mx-auto grid gap-6 md:grid-cols-4 lg:grid-cols-4 items-start md:max-w-2xl lg:max-w-none"
                     >
                         <CollectionItem
