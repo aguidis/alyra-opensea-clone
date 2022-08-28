@@ -3,24 +3,25 @@ import { storeToRefs } from 'pinia';
 import Header from '../components/Header.vue';
 import CollectionItem from '../components/CollectionItem.vue';
 import { useMinterStore } from '../stores/minter-store';
-import { watch } from 'vue';
 import { useWalletStore } from '../stores/wallet-store';
+import { watchEffect } from 'vue';
+import Footer from '../components/Footer.vue';
 
 const { loading, createdTokens } = storeToRefs(useMinterStore());
 const { fetchCreatedTokens } = useMinterStore();
 
 const { address } = storeToRefs(useWalletStore());
 
-watch(address, (value) => {
-    fetchCreatedTokens(value);
+watchEffect(() => {
+    fetchCreatedTokens(address.value);
 });
 </script>
 
 <template>
-    <div class="flex flex-col min-h-screen overflow-hidden">
+    <div class="flex flex-col h-screen justify-between">
         <Header />
 
-        <main class="flex-grow bg-gray-100">
+        <main class="bg-gray-100 grow">
             <section class="max-w-6xl mx-auto px-4 sm:px-6">
                 <div class="py-12 md:py-20">
                     <div class="max-w-3xl mx-auto text-center py-12 md:py-20">
@@ -59,11 +60,13 @@ watch(address, (value) => {
                     >
                         <CollectionItem v-for="(item, index) in createdTokens" :key="index" :token-index="item.id" :item="item" :address="item.nftAddress" />
                     </section>
-                    <section v-else class="max-w-sm">
+                    <section v-else-if="loading === false" class="max-w-sm">
                         <p class="mb-5">You don’t have any created tokens yet.</p>
                     </section>
                 </div>
             </section>
         </main>
+
+        <Footer />
     </div>
 </template>

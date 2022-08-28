@@ -27,12 +27,10 @@
                             AlyraSea is the world's second and largest NFT marketplace
                         </p>
                         <div class="max-w-xs mx-auto sm:max-w-none sm:flex sm:justify-center aos-init aos-animate" data-aos="zoom-y-out" data-aos-delay="300">
-                            <router-link :to="{ name: 'explore' }" class="btn text-white bg-blue-600 hover:bg-blue-700 w-full mb-4 sm:w-auto sm:mb-0">
+                            <router-link :to="{ name: 'explore' }" class="btn text-blue-600 bg-white border-blue-600 w-full sm:w-auto mb-4 sm:mb-0 sm:mr-4">
                                 Explore
                             </router-link>
-                            <router-link :to="{ name: 'create_token' }" class="btn text-blue-600 bg-white border-blue-600 w-full sm:w-auto sm:ml-4">
-                                Create
-                            </router-link>
+                            <router-link :to="{ name: 'explore' }" class="btn text-white bg-blue-600 hover:bg-blue-700 w-full sm:w-auto"> Create </router-link>
                         </div>
                     </div>
                 </div>

@@ -4,23 +4,24 @@ import { useMarketplaceStore } from '../stores/marketplace-store';
 import Header from '../components/Header.vue';
 import CollectionItem from '../components/CollectionItem.vue';
 import { useWalletStore } from '../stores/wallet-store';
-import { watch } from 'vue';
+import { watchEffect } from 'vue';
+import Footer from '../components/Footer.vue';
 
 const { loading, accountTokens } = storeToRefs(useMarketplaceStore());
 const { fetchCollectedTokens } = useMarketplaceStore();
 
 const { address } = storeToRefs(useWalletStore());
 
-watch(address, (value) => {
-    fetchCollectedTokens(value);
+watchEffect(() => {
+    fetchCollectedTokens(address.value);
 });
 </script>
 
 <template>
-    <div class="flex flex-col min-h-screen overflow-hidden">
+    <div class="flex flex-col h-screen justify-between">
         <Header />
 
-        <main class="flex-grow bg-gray-100">
+        <main class="bg-gray-100 grow">
             <section class="max-w-6xl mx-auto px-4 sm:px-6">
                 <div class="py-12 md:py-20">
                     <div class="max-w-3xl mx-auto text-center py-12 md:py-20">
@@ -57,11 +58,13 @@ watch(address, (value) => {
                     >
                         <CollectionItem v-for="(item, index) in accountTokens" :key="index" :token-index="item.id" :item="item" :address="item.nftAddress" />
                     </section>
-                    <section v-else class="max-w-sm">
+                    <section v-else-if="loading === false" class="max-w-sm">
                         <p class="mb-5">You don’t have any collected tokens yet.</p>
                     </section>
                 </div>
             </section>
         </main>
+
+        <Footer />
     </div>
 </template>

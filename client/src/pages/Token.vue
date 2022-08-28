@@ -33,7 +33,7 @@ const canUpdateListing = computed(() => isConnected.value && isForSale.value && 
         <Header />
 
         <main class="flex-grow">
-            <div v-if="token" class="max-w-6xl mx-auto px-4 sm:px-6 pt-32">
+            <div v-if="token" class="max-w-6xl mx-auto px-4 sm:px-6 lg:pt-32 sm:pt-20">
                 <div class="flex flex-row flex-wrap py-4">
                     <aside class="w-full sm:w-1/3 md:w-2/5 px-2">
                         <article class="rounded-lg border overflow-hidden">
@@ -304,7 +304,10 @@ const canUpdateListing = computed(() => isConnected.value && isForSale.value && 
                                 <h3 class="font-semibold inline ml-2 text-lg ml-2 text-lg">Listings</h3>
                             </header>
                             <div class="p-5 bg-gray-100">
-                                <table v-if="token?.listing?.history.length > 0" class="w-full text-sm text-left text-gray-500">
+                                <table
+                                    v-if="token?.listing?.history.length > 0"
+                                    class="w-full text-sm text-left text-gray-500 overflow-x-scroll block md:table"
+                                >
                                     <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                                         <tr>
                                             <th scope="col" class="py-3 px-6">Price</th>

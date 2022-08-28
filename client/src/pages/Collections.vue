@@ -5,6 +5,7 @@ import Header from '../components/Header.vue';
 import { useWalletStore } from '../stores/wallet-store';
 import { watch } from 'vue';
 import CollectionPreview from '../components/CollectionPreview.vue';
+import Footer from '../components/Footer.vue';
 
 const { address } = storeToRefs(useWalletStore());
 
@@ -17,10 +18,10 @@ watch(address, (value) => {
 </script>
 
 <template>
-    <div class="flex flex-col min-h-screen overflow-hidden">
+    <div class="flex flex-col h-screen justify-between">
         <Header />
 
-        <main class="flex-grow bg-gray-100">
+        <main class="bg-gray-100 grow">
             <section class="max-w-6xl mx-auto px-4 sm:px-6">
                 <div class="py-12 md:py-20">
                     <div class="max-w-3xl mx-auto text-center py-12 md:py-20">
@@ -49,11 +50,13 @@ watch(address, (value) => {
                     >
                         <CollectionPreview v-for="item in accountCollections" :key="item.index.toString()" :item="item" />
                     </section>
-                    <section v-else class="max-w-sm">
+                    <section v-else-if="loading === false" class="max-w-sm">
                         <p class="mb-5">You don’t have any collection yet.</p>
                     </section>
                 </div>
             </section>
         </main>
+
+        <Footer />
     </div>
 </template>

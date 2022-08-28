@@ -5,6 +5,7 @@ import { useCollectionFactoryStore } from '../stores/collection-factory-store';
 import { ref, watch, computed } from 'vue';
 import { useWalletStore } from '../stores/wallet-store';
 import Header from '../components/Header.vue';
+import Footer from '../components/Footer.vue';
 
 const router = useRouter();
 
@@ -42,12 +43,12 @@ watch(
 </script>
 
 <template>
-    <main>
+    <div class="flex flex-col h-screen justify-between">
         <Header :force-shadow="true" />
 
-        <main class="flex-grow">
-            <div v-if="step === 1" class="max-w-6xl mx-auto px-4 sm:px-6 pt-32">
-                <h1 class="h2 mb-5 font-bold">Create a collection</h1>
+        <main class="grow">
+            <div v-if="step === 1" class="max-w-6xl mx-auto px-4 md:px-0 my-16">
+                <h1 class="h2 mb-5 font-bold pt-12 md:pt-20">Create a collection</h1>
 
                 <form @submit.prevent="onSubmit">
                     <div class="mb-6">
@@ -112,7 +113,7 @@ watch(
                 </form>
             </div>
 
-            <div v-else class="max-w-6xl mx-auto px-4 sm:px-6 pt-32 text-center">
+            <div v-else class="max-w-6xl mx-auto px-4 sm:px-6 text-center lg:pt-32 sm:pt-20">
                 <h1 class="h2 mb-5 font-bold">You created the collection {{ newCollection.name }}!</h1>
 
                 <router-link class="btn text-white bg-blue-600 hover:bg-blue-700 w-full mb-4 sm:w-auto sm:mb-0" :to="{ name: 'collections' }">
@@ -120,5 +121,7 @@ watch(
                 </router-link>
             </div>
         </main>
-    </main>
+
+        <Footer />
+    </div>
 </template>

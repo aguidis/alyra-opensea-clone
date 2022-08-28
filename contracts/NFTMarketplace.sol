@@ -11,7 +11,7 @@ error AlreadyListed(address nftAddress, uint256 tokenId);
 error NotListed(address nftAddress, uint256 tokenId);
 error PriceMustBeAboveZero();
 error PriceNotMet(address nftAddress, uint256 tokenId, uint256 price);
-error NoProceeds();
+error NoProfits();
 error NotApprovedForMarketplace();
 error NotOwner();
 
@@ -237,18 +237,18 @@ contract NFTMarketplace is ReentrancyGuard, Ownable {
     }
 
     /*
-     * @notice Method for withdrawing proceeds from sales
+     * @notice Method for withdrawing profits from sales
      */
-    function withdrawProceeds() external {
-        uint256 proceeds = profits[msg.sender];
+    function withdrawProfits() external {
+        uint256 accountProfits = profits[msg.sender];
 
-        if (proceeds <= 0) {
-            revert NoProceeds();
+        if (accountProfits <= 0) {
+            revert NoProfits();
         }
 
         profits[msg.sender] = 0;
 
-        (bool success,) = payable(msg.sender).call{value : proceeds}("");
+        (bool success,) = payable(msg.sender).call{value : accountProfits}("");
 
         require(success, "Transfer failed");
     }
@@ -306,9 +306,9 @@ contract NFTMarketplace is ReentrancyGuard, Ownable {
     }
 
     /*
-     * @notice Returns all proceeds for a given address
+     * @notice Returns all profits for a given address
      */
-    function getProceeds(address seller) external view returns (uint256) {
+    function getProfits(address seller) external view returns (uint256) {
         return profits[seller];
     }
 

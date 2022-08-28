@@ -8,7 +8,6 @@ import { defineStore } from 'pinia';
 
 import { DEFAULT_NETWORK } from '../constants/blockchain';
 import { getNetworkParams } from '../helpers/network-params';
-import { storeToRefs } from 'pinia';
 
 const readOnlyProvider = new StaticJsonRpcProvider(getNetworkParams().rpcUrls[0]);
 const signer = readOnlyProvider.getSigner();
@@ -323,6 +322,15 @@ export const useMarketplaceStore = defineStore({
         },
         async fetchCollectedTokens(accountAddress) {
             this.loading = true;
+
+            if (!accountAddress) {
+                return;
+            }
+
+            if (this.accountTokens.length > 0) {
+                this.loading = false;
+                return;
+            }
 
             try {
                 const collectionCount = await readOnlyMarketplaceContract.getCollectionCount();

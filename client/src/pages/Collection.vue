@@ -16,8 +16,8 @@ fetchCollection(id);
 
 let page = 1;
 const itemsPerPage = 12;
-const totalPages = computed(() => Math.ceil(collectionTotalSupply.value / itemsPerPage))
-const loadedCollectionAddress = computed(() => collection.value.nftAddress)
+const totalPages = computed(() => Math.ceil(collectionTotalSupply.value / itemsPerPage));
+const loadedCollectionAddress = computed(() => collection.value.nftAddress);
 
 function throttle(func, wait) {
     let waiting = false;
@@ -52,11 +52,11 @@ watch(collection, (loadedCollection) => {
 onMounted(() => {
     // Handle infinite scroll for big collections
     window.addEventListener('scroll', onScroll);
-})
+});
 
 onUnmounted(() => {
-    window.removeEventListener('scroll', onScroll)
-})
+    window.removeEventListener('scroll', onScroll);
+});
 </script>
 
 <template>

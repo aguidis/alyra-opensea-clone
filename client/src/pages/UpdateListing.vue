@@ -6,6 +6,7 @@ import Header from '../components/Header.vue';
 import { computed, ref, watch } from 'vue';
 import { useWalletStore } from '../stores/wallet-store';
 import { toKebabCase } from '../helpers/string';
+import Footer from '../components/Footer.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -94,7 +95,7 @@ watch(
             </div>
         </section>
 
-        <main class="flex-grow">
+        <main class="grow">
             <div class="max-w-6xl mx-auto px-4 sm:px-6">
                 <div class="flex flex-row flex-wrap justify-between">
                     <div class="w-full md:basis-1/2">
@@ -196,5 +197,7 @@ watch(
                 </div>
             </div>
         </main>
+
+        <Footer />
     </div>
 </template>

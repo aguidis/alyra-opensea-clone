@@ -87,6 +87,15 @@ export const useMinterStore = defineStore({
         async fetchCreatedTokens(accountAddress) {
             this.loading = true;
 
+            if (!accountAddress) {
+                return;
+            }
+
+            if (this.createdTokens.length > 0) {
+                this.loading = false;
+                return;
+            }
+
             try {
                 let tokenPromises = [];
 
@@ -96,6 +105,11 @@ export const useMinterStore = defineStore({
                 // Then fetch all created collection
                 const createdCollectionCount = await readOnlyFactoryContract.getOwnerBalance(accountAddress);
                 const createdCollectionBalance = parseInt(createdCollectionCount.toString(), 10);
+
+                if (createdCollectionBalance === 0) {
+                    this.loading = false;
+                    return;
+                }
 
                 for (let i = 0; i < createdCollectionBalance; i++) {
                     const collectionAddress = await readOnlyFactoryContract.getOwnerCollectionByIndex(accountAddress, i);

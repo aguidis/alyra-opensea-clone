@@ -34,31 +34,57 @@ const toggleSubmenu = () => (submenu.value = !submenu.value);
 
 <template>
     <header
-        class="bg-white fixed w-full z-30 md:bg-opacity-90 transition duration-300 ease-in-out"
+        class="fixed w-full z-30 md:bg-opacity-90 transition duration-300 ease-in-out"
         :class="`${(!top || forceShadow) && 'bg-white backdrop-blur-sm shadow-lg'}`"
     >
-        <div class="max-w-6xl mx-auto px-5 sm:px-6">
-            <div class="flex items-center justify-between h-16">
-                <nav class="flex flex-grow">
-                    <ul class="flex flex-grow justify-start flex-wrap items-center">
-                        <li>
-                            <router-link :to="{ name: 'home' }" class="block pr-5" aria-label="Cruip">
-                                <svg class="w-8 h-8" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-                                    <defs>
-                                        <radialGradient id="header-logo" cx="21.152%" cy="86.063%" fx="21.152%" fy="86.063%" r="79.941%">
-                                            <stop stop-color="#4FD1C5" offset="0%" />
-                                            <stop stop-color="#81E6D9" offset="25.871%" />
-                                            <stop stop-color="#338CF5" offset="100%" />
-                                        </radialGradient>
-                                    </defs>
-                                    <rect width="32" height="32" rx="16" fill="url(#header-logo)" fill-rule="nonzero" />
-                                </svg>
-                            </router-link>
-                        </li>
+        <nav class="bg-white border-gray-200 px-4 lg:px-6 py-2.5">
+            <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
+                <router-link :to="{ name: 'home' }" class="flex items-center">
+                    <svg class="mr-3 h-6 sm:h-9" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <radialGradient id="header-logo" cx="21.152%" cy="86.063%" fx="21.152%" fy="86.063%" r="79.941%">
+                                <stop stop-color="#4FD1C5" offset="0%" />
+                                <stop stop-color="#81E6D9" offset="25.871%" />
+                                <stop stop-color="#338CF5" offset="100%" />
+                            </radialGradient>
+                        </defs>
+                        <rect width="32" height="32" rx="16" fill="url(#header-logo)" fill-rule="nonzero" />
+                    </svg>
+                    <span class="self-center text-xl font-semibold whitespace-nowrap text-gray-800">AlyraSea</span>
+                </router-link>
+                <div class="flex items-center lg:order-2">
+                    <ConnectButton />
+
+                    <button
+                        type="button"
+                        class="inline-flex items-center p-2 ml-1 text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+                        aria-controls="mobile-menu-2"
+                        aria-expanded="false"
+                        @click="toggleSubmenu"
+                    >
+                        <span class="sr-only">Open main menu</span>
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                fill-rule="evenodd"
+                                d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                                clip-rule="evenodd"
+                            ></path>
+                        </svg>
+                        <svg class="hidden w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                fill-rule="evenodd"
+                                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                clip-rule="evenodd"
+                            ></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="justify-between items-center w-full lg:flex lg:w-auto lg:order-1" :class="{ hidden: !submenu }">
+                    <ul class="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
                         <li>
                             <router-link
                                 :to="{ name: 'explore' }"
-                                class="font-bold text-gray-600 hover:text-gray-900 px-5 flex items-center transition duration-150 ease-in-out"
+                                class="block py-2 pr-4 pl-3 text-gray-800 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0"
                             >
                                 Explore
                             </router-link>
@@ -66,48 +92,30 @@ const toggleSubmenu = () => (submenu.value = !submenu.value);
                         <li v-if="isConnected">
                             <router-link
                                 :to="{ name: 'create_token' }"
-                                class="font-bold text-gray-600 hover:text-gray-900 px-5 flex items-center transition duration-150 ease-in-out"
+                                class="block py-2 pr-4 pl-3 text-gray-800 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0"
                             >
                                 Create
                             </router-link>
                         </li>
-                        <li
-                            v-if="isConnected"
-                            class="relative font-bold text-gray-600 hover:text-gray-900 px-5 flex items-center transition duration-150 ease-in-out cursor-pointer"
-                            @click="toggleSubmenu"
-                        >
-                            Account
-                            <!-- Dropdown menu -->
-                            <div v-show="submenu" class="absolute top-11 w-44 bg-white rounded divide-y divide-gray-100 shadow-md">
-                                <ul class="text-sm text-gray-800">
-                                    <li class="border-b">
-                                        <router-link :to="{ name: 'account' }" class="block py-3 px-4 hover:bg-gray-100 hover:rounded font-bold">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-2" viewBox="0 0 20 20" fill="currentColor">
-                                                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
-                                            </svg>
-                                            My NFTs
-                                        </router-link>
-                                    </li>
-                                    <li>
-                                        <router-link :to="{ name: 'collections' }" class="block py-3 px-4 hover:bg-gray-100 hover:rounded font-bold">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-2" viewBox="0 0 20 20" fill="currentColor">
-                                                <path
-                                                    d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
-                                                />
-                                            </svg>
-                                            My Collections
-                                        </router-link>
-                                    </li>
-                                </ul>
-                            </div>
+                        <li>
+                            <router-link
+                                :to="{ name: 'account' }"
+                                class="block py-2 pr-4 pl-3 text-gray-800 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0"
+                            >
+                                My NFTs
+                            </router-link>
+                        </li>
+                        <li>
+                            <router-link
+                                :to="{ name: 'collections' }"
+                                class="block py-2 pr-4 pl-3 text-gray-800 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0"
+                            >
+                                My Collections
+                            </router-link>
                         </li>
                     </ul>
-                </nav>
-
-                <div class="flex-shrink-0 mr-4">
-                    <ConnectButton />
                 </div>
             </div>
-        </div>
+        </nav>
     </header>
 </template>

@@ -1,1 +1,0 @@
--   Voir pourquoi la liste des collections créées n'est pas load au premier refresh
