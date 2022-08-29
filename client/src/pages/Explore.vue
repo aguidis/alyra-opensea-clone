@@ -34,6 +34,9 @@ fetchCollections();
                 <section v-if="collections.length > 0" class="max-w-sm mx-auto grid gap-6 md:grid-cols-3 lg:grid-cols-4 items-start md:max-w-2xl lg:max-w-none">
                     <CollectionPreview v-for="item in collections" :key="item.index.toString()" :item="item" />
                 </section>
+                <section v-else-if="loading === false" class="max-w-sm">
+                    <p class="mb-5">Collections are coming soon...</p>
+                </section>
             </div>
         </main>
 

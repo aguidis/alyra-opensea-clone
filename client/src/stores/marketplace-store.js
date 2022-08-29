@@ -11,8 +11,6 @@ import { getNetworkParams } from '../helpers/network-params';
 
 const provider = new StaticJsonRpcProvider(getNetworkParams().rpcUrls[0]);
 
-console.log('provider', provider);
-
 const marketplaceNetwork = NFTMarketplace.networks[DEFAULT_NETWORK];
 
 const readOnlyMarketplaceContract = new ethers.Contract(marketplaceNetwork.address, NFTMarketplace.abi, provider);
@@ -340,6 +338,11 @@ export const useMarketplaceStore = defineStore({
                 let tokenPromises = [];
 
                 const collectionCountInt = parseInt(collectionCount.toString(), 10);
+
+                if (collectionCountInt === 0) {
+                    this.loading = false;
+                    return;
+                }
 
                 for (let i = 0; i < collectionCountInt; i++) {
                     const collection = await readOnlyMarketplaceContract.getCollectionAtIndex(i);
