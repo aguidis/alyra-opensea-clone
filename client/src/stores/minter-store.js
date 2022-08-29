@@ -8,19 +8,17 @@ import NFTMarketplace from '../contracts/NFTMarketplace.json';
 import NFTMinter from '../contracts/NFTMinter.json';
 import UpgradableGenericNFT from '../contracts/UpgradableGenericNFT.json';
 import NFTCollectionFactory from '../contracts/NFTCollectionFactory.json';
-import GenericNFT from '../contracts/GenericNFT.json';
 
-const readOnlyProvider = new StaticJsonRpcProvider(getNetworkParams().rpcUrls[0]);
-const signer = readOnlyProvider.getSigner();
+const provider = new StaticJsonRpcProvider(getNetworkParams().rpcUrls[0]);
 
 const factoryNetwork = NFTCollectionFactory.networks[DEFAULT_NETWORK];
-const readOnlyFactoryContract = new ethers.Contract(factoryNetwork.address, NFTCollectionFactory.abi, signer);
+const readOnlyFactoryContract = new ethers.Contract(factoryNetwork.address, NFTCollectionFactory.abi, provider);
 
 const minterNetwork = NFTMinter.networks[DEFAULT_NETWORK];
-const readOnlyMinterContract = new ethers.Contract(minterNetwork.address, NFTMinter.abi, signer);
+const readOnlyMinterContract = new ethers.Contract(minterNetwork.address, NFTMinter.abi, provider);
 
 const marketplaceNetwork = NFTMarketplace.networks[DEFAULT_NETWORK];
-const readOnlyMarketplaceContract = new ethers.Contract(marketplaceNetwork.address, NFTMarketplace.abi, signer);
+const readOnlyMarketplaceContract = new ethers.Contract(marketplaceNetwork.address, NFTMarketplace.abi, provider);
 
 export const useMinterStore = defineStore({
     id: 'minter',
@@ -116,7 +114,7 @@ export const useMinterStore = defineStore({
 
                 // Finally fetch all created tokens
                 for (const nftAddress of nftAddresses) {
-                    const nftContract = new ethers.Contract(nftAddress, UpgradableGenericNFT.abi, signer);
+                    const nftContract = new ethers.Contract(nftAddress, UpgradableGenericNFT.abi, provider);
 
                     const balance = await nftContract.balanceOf(accountAddress);
                     const balanceInt = parseInt(balance.toString(), 10);

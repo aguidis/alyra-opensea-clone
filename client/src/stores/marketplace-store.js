@@ -9,12 +9,13 @@ import { defineStore } from 'pinia';
 import { DEFAULT_NETWORK } from '../constants/blockchain';
 import { getNetworkParams } from '../helpers/network-params';
 
-const readOnlyProvider = new StaticJsonRpcProvider(getNetworkParams().rpcUrls[0]);
-const signer = readOnlyProvider.getSigner();
+const provider = new StaticJsonRpcProvider(getNetworkParams().rpcUrls[0]);
+
+console.log('provider', provider);
 
 const marketplaceNetwork = NFTMarketplace.networks[DEFAULT_NETWORK];
 
-const readOnlyMarketplaceContract = new ethers.Contract(marketplaceNetwork.address, NFTMarketplace.abi, signer);
+const readOnlyMarketplaceContract = new ethers.Contract(marketplaceNetwork.address, NFTMarketplace.abi, provider);
 
 export const useMarketplaceStore = defineStore({
     id: 'marketplace',
@@ -48,7 +49,7 @@ export const useMarketplaceStore = defineStore({
                         continue;
                     }
 
-                    const nftContract = new ethers.Contract(collection.nftAddress, GenericNFT.abi, signer);
+                    const nftContract = new ethers.Contract(collection.nftAddress, GenericNFT.abi, provider);
 
                     // Fetch first item for each collection in order to have an image preview
                     nftContract
@@ -95,7 +96,7 @@ export const useMarketplaceStore = defineStore({
             this.loading = true;
 
             try {
-                const nftContract = new ethers.Contract(address, GenericNFT.abi, signer);
+                const nftContract = new ethers.Contract(address, GenericNFT.abi, provider);
 
                 // TODO handle infinite scroll pagination
                 let totalSupply = await nftContract.totalSupply();
@@ -153,7 +154,7 @@ export const useMarketplaceStore = defineStore({
             this.token = null;
 
             try {
-                const nftContract = new ethers.Contract(address, GenericNFT.abi, signer);
+                const nftContract = new ethers.Contract(address, GenericNFT.abi, provider);
 
                 let totalSupply = await nftContract.totalSupply();
                 totalSupply = parseInt(totalSupply.toString(), 10);
@@ -347,7 +348,7 @@ export const useMarketplaceStore = defineStore({
                         continue;
                     }
 
-                    const nftContract = new ethers.Contract(collection.nftAddress, GenericNFT.abi, signer);
+                    const nftContract = new ethers.Contract(collection.nftAddress, GenericNFT.abi, provider);
                     const balance = await nftContract.balanceOf(accountAddress);
 
                     const balanceInt = parseInt(balance.toString(), 10);

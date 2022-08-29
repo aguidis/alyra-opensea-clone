@@ -10,14 +10,14 @@ import { getNetworkParams } from '../helpers/network-params';
 import { DEFAULT_NETWORK } from '../constants/blockchain';
 import { useWalletStore } from './wallet-store';
 
-const readOnlyProvider = new StaticJsonRpcProvider(getNetworkParams().rpcUrls[0]);
-const signer = readOnlyProvider.getSigner();
+const provider = new StaticJsonRpcProvider(getNetworkParams().rpcUrls[0]);
 
 const factoryNetwork = NFTCollectionFactory.networks[DEFAULT_NETWORK];
-const readOnlyFactoryContract = new ethers.Contract(factoryNetwork.address, NFTCollectionFactory.abi, signer);
+// Prevent error: Error: unknown account #0 (operation="getAddress", code=UNSUPPORTED_OPERATION, version=providers/5.6.8)
+const readOnlyFactoryContract = new ethers.Contract(factoryNetwork.address, NFTCollectionFactory.abi, provider);
 
 const marketplaceNetwork = NFTMarketplace.networks[DEFAULT_NETWORK];
-const readOnlyMarketplaceContract = new ethers.Contract(marketplaceNetwork.address, NFTMarketplace.abi, signer);
+const readOnlyMarketplaceContract = new ethers.Contract(marketplaceNetwork.address, NFTMarketplace.abi, provider);
 
 export const useCollectionFactoryStore = defineStore({
     id: 'collection-factory',
@@ -79,7 +79,7 @@ export const useCollectionFactoryStore = defineStore({
                     // Fetch collection information
                     let marketPlaceCollection = await readOnlyMarketplaceContract.getCollectionByAddress(collectionAddress);
 
-                    const nftContract = new ethers.Contract(collectionAddress, UpgradableGenericNFT.abi, signer);
+                    const nftContract = new ethers.Contract(collectionAddress, UpgradableGenericNFT.abi, provider);
 
                     let totalSupply = await nftContract.totalSupply();
                     totalSupply = parseInt(totalSupply.toString(), 10);
