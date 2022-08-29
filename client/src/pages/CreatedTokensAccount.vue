@@ -54,10 +54,7 @@ watchEffect(() => {
                         </article>
                     </section>
 
-                    <section
-                        v-if="createdTokens.length > 0"
-                        class="max-w-sm mx-auto grid gap-6 md:grid-cols-4 lg:grid-cols-4 items-start md:max-w-2xl lg:max-w-none"
-                    >
+                    <section v-if="createdTokens.length > 0" class="max-w-sm mx-auto grid gap-6 md:grid-cols-4 lg:grid-cols-4 md:max-w-2xl lg:max-w-none">
                         <CollectionItem v-for="(item, index) in createdTokens" :key="index" :token-index="item.id" :item="item" :address="item.nftAddress" />
                     </section>
                     <section v-else-if="loading === false" class="max-w-sm">

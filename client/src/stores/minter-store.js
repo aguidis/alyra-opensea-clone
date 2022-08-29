@@ -8,6 +8,7 @@ import NFTMarketplace from '../contracts/NFTMarketplace.json';
 import NFTMinter from '../contracts/NFTMinter.json';
 import UpgradableGenericNFT from '../contracts/UpgradableGenericNFT.json';
 import NFTCollectionFactory from '../contracts/NFTCollectionFactory.json';
+import GenericNFT from '../contracts/GenericNFT.json';
 
 const readOnlyProvider = new StaticJsonRpcProvider(getNetworkParams().rpcUrls[0]);
 const signer = readOnlyProvider.getSigner();
@@ -16,6 +17,7 @@ const factoryNetwork = NFTCollectionFactory.networks[DEFAULT_NETWORK];
 const readOnlyFactoryContract = new ethers.Contract(factoryNetwork.address, NFTCollectionFactory.abi, signer);
 
 const minterNetwork = NFTMinter.networks[DEFAULT_NETWORK];
+const readOnlyMinterContract = new ethers.Contract(minterNetwork.address, NFTMinter.abi, signer);
 
 const marketplaceNetwork = NFTMarketplace.networks[DEFAULT_NETWORK];
 const readOnlyMarketplaceContract = new ethers.Contract(marketplaceNetwork.address, NFTMarketplace.abi, signer);
@@ -65,13 +67,6 @@ export const useMinterStore = defineStore({
 
                 const token = await tokenMetadata.json();
 
-                console.log('token', {
-                    id: tokenId,
-                    ...token,
-                    tokenMetadata: metadataUrl,
-                    address: contractAddress
-                });
-
                 this.token = {
                     id: tokenId,
                     ...token,
@@ -106,7 +101,10 @@ export const useMinterStore = defineStore({
                 const createdCollectionCount = await readOnlyFactoryContract.getOwnerBalance(accountAddress);
                 const createdCollectionBalance = parseInt(createdCollectionCount.toString(), 10);
 
-                if (createdCollectionBalance === 0) {
+                const minterOwnerBalance = await readOnlyMinterContract.balanceOf(accountAddress);
+                const minterOwnerBalanceInt = parseInt(minterOwnerBalance.toString(), 10);
+
+                if (minterOwnerBalanceInt === 0 && createdCollectionBalance === 0) {
                     this.loading = false;
                     return;
                 }

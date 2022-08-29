@@ -13,16 +13,16 @@ module.exports = {
         develop: {
             host: "127.0.0.1",
             port: 7545,
-            network_id: 1337,
+            network_id: 1337
         },
         rinkeby: {
             provider: () => new HDWalletProvider(mnemonic, `https://rinkeby.infura.io/v3/${infuraKey}`),
-            network_id: 4,
-        },
+            network_id: 4
+        }
     },
     compilers: {
         solc: {
-            version: "^0.8.0",
-        },
-    },
+            version: "^0.8.0"
+        }
+    }
 };

@@ -12,7 +12,7 @@
                 />
             </svg>
             <p class="ml-3 text-md font-bold text-white">
-                {{ error }}
+                {{ error.message }}
             </p>
         </div>
     </div>

@@ -62,15 +62,16 @@ export const useCollectionFactoryStore = defineStore({
         },
         async fetchAccountCollections(accountAddress) {
             this.loading = true;
+            this.accountCollections = [];
+
+            if (!accountAddress) {
+                return;
+            }
 
             try {
                 const collectionCount = await readOnlyFactoryContract.getOwnerBalance(accountAddress);
 
                 const balance = parseInt(collectionCount.toString(), 10);
-
-                if (balance === 0) {
-                    return;
-                }
 
                 for (let i = 0; i < balance; i++) {
                     const collectionAddress = await readOnlyFactoryContract.getOwnerCollectionByIndex(accountAddress, i);

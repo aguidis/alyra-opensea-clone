@@ -4,8 +4,11 @@ const SnakeNFT = artifacts.require("NFT/SnakeNFT");
 const NFTMinter = artifacts.require("NFTMinter");
 
 module.exports = async function (deployer, network, accounts) {
-    await deployer.deploy(CometSpaceshipNFT);
-    await deployer.deploy(PokemonNFT);
-    await deployer.deploy(SnakeNFT);
+    if (network.startsWith("develop")) {
+        await deployer.deploy(CometSpaceshipNFT);
+        await deployer.deploy(PokemonNFT);
+        await deployer.deploy(SnakeNFT);
+    }
+
     await deployer.deploy(NFTMinter, 'AlyraSeaNFT', 'AlyNFT')
 };

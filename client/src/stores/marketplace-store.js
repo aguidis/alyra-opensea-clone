@@ -314,6 +314,7 @@ export const useMarketplaceStore = defineStore({
                 }
 
                 this.token.listing.price = 0;
+                this.accountTokens = [];
             } catch (error) {
                 this.error = error;
             } finally {

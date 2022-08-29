@@ -3,17 +3,17 @@ import { storeToRefs } from 'pinia';
 import { useCollectionFactoryStore } from '../stores/collection-factory-store';
 import Header from '../components/Header.vue';
 import { useWalletStore } from '../stores/wallet-store';
-import { watch } from 'vue';
 import CollectionPreview from '../components/CollectionPreview.vue';
 import Footer from '../components/Footer.vue';
+import { watchEffect } from 'vue';
 
 const { address } = storeToRefs(useWalletStore());
 
 const { loading, accountCollections } = storeToRefs(useCollectionFactoryStore());
 const { fetchAccountCollections } = useCollectionFactoryStore();
 
-watch(address, (value) => {
-    fetchAccountCollections(value);
+watchEffect(() => {
+    fetchAccountCollections(address.value);
 });
 </script>
 

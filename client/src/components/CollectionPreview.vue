@@ -18,7 +18,7 @@ const props = defineProps({
                 :src="item.coverImage.replace('ipfs://', 'https://nftstorage.link/ipfs/')"
                 :alt="item.name"
             />
-            <img v-else class="rounded-t-lg w-full" src="https://via.placeholder.com/350" :alt="item.name" />
+            <img v-else class="rounded-t-lg w-full" src="/images/collection-placeholder.jpg" :alt="item.name" />
         </router-link>
 
         <p class="font-bold pt-3">{{ item.name }}</p>

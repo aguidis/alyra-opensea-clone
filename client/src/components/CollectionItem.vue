@@ -1,6 +1,6 @@
 <template>
     <article class="bg-white rounded-lg shadow-lg hover:shadow-xl group relative overflow-hidden">
-        <div class="overflow-hidden">
+        <div class="overflow-hidden h-[258px]">
             <router-link :to="{ name: 'token', params: { address: address, index: tokenIndex } }">
                 <img
                     class="rounded-t-lg w-full hover:scale-110 transition-all"
