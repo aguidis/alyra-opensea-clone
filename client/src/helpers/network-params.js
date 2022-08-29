@@ -18,7 +18,7 @@ export const getNetworkParams = (network = DEFAULT_NETWORK) => {
     const testNetParams = {
         chainId: `0x${Networks.TEST_NET.toString(16)}`,
         chainName: 'Rinkeby Test Network',
-        rpcUrls: [`https://rinkeby.infura.io/v3${infuraApiKey}`],
+        rpcUrls: [`https://rinkeby.infura.io/v3/${infuraApiKey}`],
         blockExplorerUrls: ['https://rinkeby.etherscan.io/'],
         nativeCurrency: {
             name: 'Ethereum',
