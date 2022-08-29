@@ -2,7 +2,7 @@
 
 Produire une application décentralisée permettant à des artistes de créer leurs collections de NFT et de les mettre à la vente directe (en ETH).
 
-- *Lien du projet* : soon
+- *Lien du projet* : https://alyra-opensea-clone.vercel.app/
 - *Vidéo de présentation* : https://youtu.be/RYO-YtdLG64
 - *Testnet* : Rinkeby
 

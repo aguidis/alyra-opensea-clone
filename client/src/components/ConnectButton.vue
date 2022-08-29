@@ -27,7 +27,7 @@ const wrongNetwork = computed(() => {
 const buttonText = computed(() => {
     if (isConnected.value && providerChainID.value !== DEFAULT_NETWORK) {
         return 'Wrong Network';
-    } else if (isConnected) {
+    } else if (isConnected.value) {
         return 'Disconnect';
     } else {
         return 'Connect';
