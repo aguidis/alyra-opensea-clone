@@ -1,9 +1,9 @@
-# PROJET FINAL - Recréer un clone minimaliste de OpenSea
+# FINAL PROJECT - Recreate a minimalist clone of OpenSea
 
-Produire une application décentralisée permettant à des artistes de créer leurs collections de NFT et de les mettre à la vente directe (en ETH).
+Produce a decentralized application allowing artists to create their NFT collections and make them available for direct sale (in ETH).
 
-- *Lien du projet* : https://alyra-opensea-clone.vercel.app/
-- *Vidéo de présentation* : https://youtu.be/RYO-YtdLG64
+- *Project link* : https://alyra-opensea-clone.vercel.app/
+- *Demo* : https://youtu.be/RYO-YtdLG64
 - *Testnet* : Rinkeby
 
 | Contract  | Address                                                                                                                       |
@@ -22,21 +22,21 @@ Produire une application décentralisée permettant à des artistes de créer le
 - Tailwind (CSS framework)
 - Vite (bundler)
 
-## Spécifications techniques minimales
+## Minimum technical specifications
 
-- Les NFT utiliseront les implémentations classiques des standards d’OpenZeppelin
-- Vous devrez uploader les metadatas et fichiers sur IPFS
-- Les utilisateurs doivent être capables de voir les nft a la vente et les NFTs possédés
-- Les collections de NFTs seront créées par une NFT factory (utilisant ou non openZeppelin)
-- Les utilisateurs auront une page de création de ces collections / des nft dans une collection
-- Dans un contrat, on lie à un utilisateur les collections de NFTs créées / dans lesquelles il a une balance.
-- L’UI est faite sur la plateforme que vous souhaitez
-- Les NFT ont un prix d’achat brut en ETH
+- The NFTs will use the classic OpenZeppelin standard implementations
+- You will have to upload the metadatas and files on IPFS
+- Users must be able to see the nft for sale and the NFTs owned
+- NFT collections will be created by an NFT factory (using or not OpenZeppelin)
+- Users will have a page to create these collections / nft in a collection
+- In a contract, we bind to a user the collections of NFTs created / in which he has a balance.
+- The UI is made on the platform you want
+- The NFTs have a gross purchase price in ETH
 
-## Installation du projet en local
+## Setup
 
-Trois collections fictives de NFTs ont été créées dans le but de facilement le développement du projet (faisant office de "fixtures").
-Pour lancer l'application il suffit d'exécuter les commandes suivantes :
+3 fake collections of NFTs have been created in order to easily develop the project (acting as "fixtures").
+To launch the application you just have to execute the following commands:
 
 ```
 make install
